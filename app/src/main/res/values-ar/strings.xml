@@ -1,0 +1,96 @@
+<resources>
+    <string name="app_name">أوليفا</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="login2">تسجيل</string>
+    <string name="user_name">اسم المستخدم</string>
+    <string name="field_req">الحقل المطلوب</string>
+    <string name="password">كلمة المرور</string>
+    <string name="password_short">كلمة المرور قصيره جدا</string>
+    <string name="search">بحث</string>
+    <string name="trade_mark">علامه تجاريه</string>
+    <string name="featured">متميز</string>
+    <string name="no_data_to_show">لا يوجد بيانات لعرضها</string>
+    <string name="open">مفتوح</string>
+    <string name="close">مغلق</string>
+    <string name="print_the_latest_invoice">طباعة اخر فاتوره</string>
+    <string name="profile">الحساب </string>
+    <string name="cash_register_details">تفاصيل تسجيل النقدية</string>
+    <string name="today_s_sale">تخفيضات اليوم</string>
+    <string name="win_today">ربح اليوم</string>
+    <string name="profile2">الحساب الشخصى</string>
+    <string name="treat_me">ربح اليوم</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="address">العنوان : </string>
+    <string name="phone_number">رقم الهاتف : </string>
+    <string name="invoice_number">رقم الفاتوره</string>
+    <string name="tax">الضريبه : </string>
+    <string name="total">الاجمالى : </string>
+    <string name="g_m">ج.م</string>
+    <string name="save_as_draft">حفظ كمسوده</string>
+    <string name="cash">كاش</string>
+    <string name="available">متاح : </string>
+    <string name="confirm">تاكيد</string>
+    <string name="tax2">ضريبه</string>
+    <string name="discount">تخفيض</string>
+    <string name="enter_discount_value">ادخل قيمه الخصم</string>
+    <string name="shipping">شحن</string>
+    <string name="shipping_charges">رسوم  الشحن</string>
+    <string name="add_customer">اضافة عميل</string>
+    <string name="write_here">اكتب هنا</string>
+    <string name="customer_group">مجموعة العملاء <font color='red'>*</font></string>
+    <string name="name">الاسم <font color='red'>*</font> </string>
+    <string name="email">البريد الالكترونى</string>
+    <string name="phone">رقم الهاتف <font color='red'>*</font> </string>
+    <string name="address1">العنوان <font color='red'>*</font> </string>
+    <string name="city">المدينه <font color='red'>*</font> </string>
+    <string name="field_labels_marked_with_are_required_input_fields">تسميات الحقول المميزة بعلامة * هي حقول إدخال مطلوبة.</string>
+    <string name="total1">مجموع</string>
+    <string name="value_added_tax_14">ضريبة القيمة المضافة15% </string>
+    <string name="total2">المجموع الكلى</string>
+    <string name="print">طباعه</string>
+    <string name="please_review_transactions_and_payments">يرجى مراجعة المعاملات والمدفوعات.</string>
+    <string name="cash1">النقديه</string>
+    <string name="total_sale_amount">اجمالي مبلغ البيع</string>
+    <string name="total_amount">المبلغ الإجمالي</string>
+    <string name="pay_in_cash">دفع نقدا</string>
+    <string name="total_sale_return">إجمالي عائد البيع</string>
+    <string name="total_expenses">المصاريف الكلية</string>
+    <string name="total_cash">مجموع المبالغ النقدية:</string>
+    <string name="end_sale">انهاء البيع</string>
+    <string name="received_amount"> المبلغ المستلم <font color='red'>*</font></string>
+    <string name="pay_the_amount"> دفع المبلغ <font color='red'>*</font></string>
+    <string name="payment_note">ملاحظة الدفع</string>
+    <string name="sale_notes">ملاحظات البيع</string>
+    <string name="cashier_notes">ملاحظات الكاشير</string>
+    <string name="trademarks">علامات تجاريه</string>
+    <string name="wait">انتظر</string>
+    <string name="incorrect_pass">كلمة مرور خاطئه</string>
+    <string name="incorrect_user">مستخدم خاطئ او غير موجود</string>
+    <string name="choose_product">اختر المنتج</string>
+    <string name="price">السعر : </string>
+    <string name="choose_tax">اختر الضريبه</string>
+    <string name="choose_customer">اختر العميل</string>
+    <string name="permisson">لا يوجد لديك صلاحيه</string>
+    <string name="ch_customergroup">اختر مجموعة العميل</string>
+    <string name="choose_customer_group">اختر مجموعة العميل</string>
+    <string name="card">كارد</string>
+    <string name="offers">العروض</string>
+    <string name="no_invoice">لا يوجد فواتير</string>
+    <string name="no_products">لا يوجد منتجات</string>
+    <string name="unvailable">غير متاح الان</string>
+    <string name="taxnum">الرقم الضريبى : </string>
+    <string name="client_name">عميل : </string>
+    <string name="history">التاريخ : </string>
+    <string name="refrence">مرجع : </string>
+    <string name="name2">الاسم</string>
+    <string name="amount">الكميه</string>
+    <string name="price2">السعر</string>
+    <string name="coalition">اتلاف</string>
+    <string name="enter_money">ادخل النقديه</string>
+    <string name="suc">تم بنجاح</string>
+    <string name="credit_card_payment">الدفع ببطاقة الائتمان</string>
+    <string name="gift_card_payment">دفع بطاقة الهدايا</string>
+    <string name="deposite_payment">دفع الإيداع</string>
+    <string name="closing">اقفال</string>
+
+</resources>

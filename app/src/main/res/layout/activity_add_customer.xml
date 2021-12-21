@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="lang"
+            type="String" />
+<variable
+    name="model"
+    type="com.oliva2.models.AddCustomerDataModel" />
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@color/white"
+                app:contentInsetEnd="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+
+                >
+
+                <LinearLayout
+                    android:id="@+id/llBack"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center"
+                        android:clickable="false"
+                        android:longClickable="false"
+                        android:padding="8dp"
+                        android:rotation='@{lang.equals("en")?180:0}'
+                        android:src="@drawable/ic_arrow_right"
+                        app:tint="@color/gray19" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:clickable="false"
+                        android:gravity="center"
+                        android:longClickable="false"
+                        android:text="@string/add_customer"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:clickable="false"
+                    android:lineSpacingExtra="5dp"
+                    android:longClickable="false"
+                    android:text="@string/field_labels_marked_with_are_required_input_fields"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_weight="1"
+                        android:padding="3dp"
+                        android:text="@string/customer_group"
+                        android:textColor="@color/gray22"
+                        android:textSize="16sp" />
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="3dp"
+                        android:text="@string/name"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_strock_primary_color1">
+
+                        <Spinner
+                            android:id="@+id/spinnerGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minWidth="90dp"
+                            android:gravity="center"
+                            android:spinnerMode="dialog"
+                            android:layout_gravity="center"
+
+                            />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_strock_primary_color1">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:hint="@string/write_here"
+                            android:padding="7dp"
+                            android:text="@={model.name}"
+                            error="@{model.error_name}"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/gray24"
+                            android:textSize="10sp" />
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_weight="1"
+                        android:padding="3dp"
+                        android:text="@string/email"
+                        android:textColor="@color/gray22"
+                        android:textSize="16sp" />
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="3dp"
+                        android:text="@string/phone"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_strock_primary_color1">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:hint="@string/write_here"
+                            android:padding="7dp"
+                            android:inputType="textEmailAddress"
+                            android:singleLine="true"
+                            android:text="@={model.email}"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/gray24"
+                            android:textSize="10sp" />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_strock_primary_color1">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:hint="@string/write_here"
+                            android:padding="7dp"
+                            android:text="@={model.phone}"
+                            error="@{model.error_phone}"
+                            android:inputType="phone"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/gray24"
+                            android:textSize="10sp" />
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_weight="1"
+                        android:padding="3dp"
+                        android:text="@string/address1"
+                        android:textColor="@color/gray22"
+                        android:textSize="16sp" />
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="3dp"
+                        android:text="@string/city"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_strock_primary_color1">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:hint="@string/write_here"
+                            android:padding="7dp"
+                            android:singleLine="true"
+                            android:text="@={model.address}"
+                            error="@{model.error_address}"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/gray24"
+                            android:textSize="10sp" />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/rounded_strock_primary_color1">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="@color/transparent"
+                            android:gravity="center_vertical"
+                            android:hint="@string/write_here"
+                            android:padding="7dp"
+                            android:singleLine="true"
+                            android:text="@={model.city}"
+                            error="@{model.error_city}"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/gray24"
+                            android:textSize="10sp" />
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnConfirm3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="90dp"
+                    android:background="@drawable/rounded_primary2"
+                    android:minWidth="100dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/confirm"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+
+                    />
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+</layout>

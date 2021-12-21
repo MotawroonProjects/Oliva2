@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name">Oliva</string>
+    <string name="login">Login</string>
+    <string name="login2">Login</string>
+    <string name="user_name">User Name</string>
+    <string name="field_req">Field Required</string>
+    <string name="password">Password</string>
+    <string name="password_short">Password Short</string>
+    <string name="search">Search</string>
+    <string name="trade_mark">Trade Mark</string>
+    <string name="featured">Featured</string>
+    <string name="no_data_to_show">No Data To Show</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="print_the_latest_invoice">Print the latest invoice</string>
+    <string name="profile">Profile</string>
+    <string name="cash_register_details">cash register details</string>
+    <string name="today_s_sale">Today\'s Sale</string>
+    <string name="win_today">Win Today</string>
+    <string name="profile2">Profile</string>
+    <string name="treat_me">Treat Me</string>
+    <string name="logout">Logout</string>
+    <string name="address">Address : </string>
+    <string name="phone_number">Phone Number :</string>
+    <string name="invoice_number">Invoice Number</string>
+    <string name="tax">Tax :</string>
+    <string name="total">Total :</string>
+    <string name="g_m">G.m</string>
+    <string name="save_as_draft">Save As Draft</string>
+    <string name="cash">Cash</string>
+    <string name="available">Available :</string>
+    <string name="confirm">Confirm</string>
+    <string name="tax2">Tax</string>
+    <string name="discount">Discount</string>
+    <string name="enter_discount_value">Enter Discount Value</string>
+    <string name="shipping">Shipping</string>
+    <string name="shipping_charges">Shipping charges</string>
+    <string name="add_customer">Add Customer</string>
+    <string name="write_here">Write Here</string>
+    <string name="customer_group">Customer group <font color='red'>*</font></string>
+    <string name="name">Name <font color='red'>*</font></string>
+    <string name="email">Email</string>
+    <string name="phone">Phone <font color='red'>*</font></string>
+    <string name="address1">Address <font color='red'>*</font></string>
+    <string name="city">City <font color='red'>*</font></string>
+    <string name="field_labels_marked_with_are_required_input_fields">Field labels marked with * are required input fields.</string>
+    <string name="total1">Total</string>
+    <string name="value_added_tax_14">value added tax 15% </string>
+    <string name="total2">Total</string>
+    <string name="print">Print</string>
+    <string name="please_review_transactions_and_payments">Please review Transactions and Payments.</string>
+    <string name="cash1">Cash</string>
+    <string name="total_sale_amount">Total Sale Amount</string>
+    <string name="total_amount">Total amount</string>
+    <string name="pay_in_cash">Pay in cash</string>
+    <string name="total_sale_return">Total Sale Return</string>
+    <string name="total_expenses">Total Expenses</string>
+    <string name="total_cash">Total cash:</string>
+    <string name="end_sale">End sale</string>
+    <string name="received_amount">Received amount<font color='red'>*</font></string>
+    <string name="pay_the_amount">Pay the amount<font color='red'>*</font></string>
+    <string name="payment_note">Payment note</string>
+    <string name="sale_notes">sale notes</string>
+    <string name="cashier_notes">Cashier Notes</string>
+    <string name="trademarks">Trademarks</string>
+    <string name="wait">Wait</string>
+    <string name="incorrect_pass">InVaild Password</string>
+    <string name="incorrect_user">InVaild User</string>
+    <string name="choose_product">Choose Product</string>
+    <string name="price">"Price : "</string>
+    <string name="choose_tax">Choose Tax</string>
+    <string name="choose_customer">Choose customer</string>
+    <string name="permisson">you Dont Have Permisson</string>
+    <string name="ch_customergroup">Choose Customer Group</string>
+    <string name="choose_customer_group">Choose Customer Group</string>
+    <string name="card">Card</string>
+    <string name="offers">Offers</string>
+    <string name="no_invoice">No Invoice Found</string>
+    <string name="no_products">No Products Found</string>
+    <string name="unvailable">unValuable Now</string>
+    <string name="taxnum">Tax Number : </string>
+    <string name="client_name">Client Name :</string>
+    <string name="history">History :</string>
+    <string name="refrence">Refrence :</string>
+    <string name="name2">Name</string>
+    <string name="amount">Amount</string>
+    <string name="price2">Price</string>
+    <string name="coalition">Damage</string>
+    <string name="enter_money">Enter Money</string>
+    <string name="suc">Success</string>
+    <string name="credit_card_payment">Credit card payment</string>
+    <string name="gift_card_payment">Gift Card Payment</string>
+    <string name="deposite_payment">Deposite Payment</string>
+    <string name="closing">Closing</string>
+</resources>
