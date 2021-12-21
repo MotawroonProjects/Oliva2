@@ -23,6 +23,9 @@ public class DataBaseInterfaces {
     public interface ProductInterface {
         void onProductDataSuccess(List<ProductModel> productModelList);
     }
+    public interface AllProductInterface {
+        void onAllProductDataSuccess(List<ProductModel> productModelList);
+    }
     public interface FirstStockInsertInterface {
         void onFirstStockDataSuccess();
     }
@@ -46,5 +49,20 @@ public class DataBaseInterfaces {
     }
     public interface FirstStockInterface {
         void onFirstStockDataSuccess(ProductModel.FirstStock productModelList);
+    }
+    public interface UnitInterface {
+        void onUnitDataSuccess(ProductModel.Unit productModelList);
+    }
+    public interface ProductOffersInterface {
+        void onProductOffersDataSuccess(List<ProductModel.OfferProducts> productModelList);
+    }
+    public interface FristStockupdateInterface {
+        void onFirstStockUpdateSuccess();
+    }
+    public interface ProductupdateInterface {
+        void onproductUpdateSuccess();
+    }
+    public interface InsertInterface {
+        void onInsertedFail();
     }
 }

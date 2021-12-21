@@ -28,7 +28,7 @@ import java.util.List;
 //        }
 
 )
-public  class ProductModel implements Serializable {
+public class ProductModel implements Serializable {
     @NonNull
     @PrimaryKey
     private int id;
@@ -36,7 +36,7 @@ public  class ProductModel implements Serializable {
     private double price;
     private int brand_id;
     private int featured;
-    @ColumnInfo(name = "image" ,typeAffinity = ColumnInfo.BLOB)
+    @ColumnInfo(name = "image", typeAffinity = ColumnInfo.BLOB)
     private byte[] imageBitmap;
 
     private int count;
@@ -350,7 +350,7 @@ public  class ProductModel implements Serializable {
         }
     }
 
-    @Entity(tableName = Tags.table_offer
+    @Entity(tableName = Tags.table_offer, indices = @Index(value = {"product_id","offer_id"}, unique = true)
 //            foreignKeys = {
 //                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
 //
@@ -362,7 +362,7 @@ public  class ProductModel implements Serializable {
         @PrimaryKey(autoGenerate = true)
         private int localid;
         private int product_id;
-
+        private int offer_id;
         private int id;
 
         public int getId() {
@@ -387,6 +387,14 @@ public  class ProductModel implements Serializable {
 
         public void setLocalid(int localid) {
             this.localid = localid;
+        }
+
+        public int getOffer_id() {
+            return offer_id;
+        }
+
+        public void setOffer_id(int offer_id) {
+            this.offer_id = offer_id;
         }
     }
 }

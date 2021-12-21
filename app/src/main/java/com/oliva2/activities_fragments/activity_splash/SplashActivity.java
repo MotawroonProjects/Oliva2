@@ -13,6 +13,7 @@ import com.oliva2.activities_fragments.activity_home.HomeActivity;
 import com.oliva2.activities_fragments.activity_login.LoginActivity;
 import com.oliva2.databinding.ActivitySplashBinding;
 import com.oliva2.language.Language;
+import com.oliva2.local_database.AccessDatabase;
 import com.oliva2.models.UserModel;
 import com.oliva2.preferences.Preferences;
 
@@ -23,6 +24,7 @@ public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding binding;
     private Preferences preferences;
     private UserModel userModel;
+    private AccessDatabase accessDatabase;
 
     @Override
     protected void attachBaseContext(Context newBase) {

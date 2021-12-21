@@ -93,7 +93,7 @@ public class CartActivity extends AppCompatActivity {
 
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
-        createOrderModel = preferences.getCartData(this);
+        createOrderModel = preferences.getcart_olivaData(this);
         adapter = new CartAdapter(list, this);
         Paper.init(this);
         lang = Paper.book().read("lang", Locale.getDefault().getLanguage());
@@ -276,8 +276,8 @@ public class CartActivity extends AppCompatActivity {
             public void onClick(View v) {
                 list.clear();
                 adapter.notifyDataSetChanged();
-                preferences.clearCart(CartActivity.this);
-                createOrderModel = preferences.getCartData(CartActivity.this);
+                preferences.clearcart_oliva(CartActivity.this);
+                createOrderModel = preferences.getcart_olivaData(CartActivity.this);
                 updateUi();
             }
         });
@@ -456,7 +456,7 @@ public class CartActivity extends AppCompatActivity {
         list.set(adapterPosition, model);
         adapter.notifyItemChanged(adapterPosition);
         createOrderModel.setDetails(list);
-        preferences.create_update_cart(this, createOrderModel);
+        preferences.create_update_cart_oliva(this, createOrderModel);
         calculateTotal();
     }
 
@@ -464,12 +464,12 @@ public class CartActivity extends AppCompatActivity {
         list.remove(adapterPosition);
         adapter.notifyItemRemoved(adapterPosition);
         createOrderModel.setDetails(list);
-        preferences.create_update_cart(this, createOrderModel);
+        preferences.create_update_cart_oliva(this, createOrderModel);
         calculateTotal();
         if (list.size() == 0) {
             binding.llEmptyCart.setVisibility(View.VISIBLE);
             binding.fltotal.setVisibility(View.GONE);
-            preferences.clearCart(this);
+            preferences.clearcart_oliva(this);
         }
     }
 
@@ -491,8 +491,8 @@ public class CartActivity extends AppCompatActivity {
 
 
                                 if (response.body() != null && response.body().getData() != null) {
-                                    preferences.clearCart(CartActivity.this);
-                                    createOrderModel = preferences.getCartData(CartActivity.this);
+                                    preferences.clearcart_oliva(CartActivity.this);
+                                    createOrderModel = preferences.getcart_olivaData(CartActivity.this);
                                     updateUi(response.body());
 
                                     // navigateToOrderDetialsActivity(response.body());

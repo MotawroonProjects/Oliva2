@@ -75,7 +75,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface {
+public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface, DataBaseInterfaces.UnitInterface, DataBaseInterfaces.ProductOffersInterface, DataBaseInterfaces.FristStockupdateInterface, DataBaseInterfaces.ProductupdateInterface, DataBaseInterfaces.AllProductInterface {
     private ActivityHomeBinding binding;
     private Preferences preferences;
     private UserModel userModel;
@@ -84,20 +84,20 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     private ActivityResultLauncher<Intent> launcher;
     private ActivityResultLauncher<Intent> launcher2;
     private AccessDatabase accessDatabase;
-    int page=1;
+    int page = 1;
+    private List<ProductModel> productModels, allproduct;
+    private List<Integer> productindex;
     private List<CategoryModel> categoryModelList;
     private HomeAdapter homeAdapter;
     private List<BrandModel> brandModelList;
-    private List<ProductModel> productModelList;
+    private List<ProductModel> productModelList, productModelList1;
     private MarkAdapter markAdapter;
     private ProductAdapter productAdapter;
     private ProductDetialsAdapter productDetialsAdapter;
-    private List<ProductModel> productDetialsModelList;
     private List<ProductDetialsModel> allproductDetialsModelList;
     private int pos = -1;
     private ProductModel productModel;
     private List<Integer> productids;
-    private List<Integer> productindex;
     private List<Integer> categoryindex;
 
     private int times;
@@ -106,7 +106,9 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     private int check = -1;
     private Bitmap bitmapimage;
     private ProgressDialog progressDialog;
-    private int layoutpos;
+    private int layoutpos = 0;
+    private int productinsert, categoryinsert, brandinsert;
+    private int layoutpos2 = 0;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -126,19 +128,21 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     private void initView() {
         progressDialog = Common.createProgressDialog(this, getString(R.string.wait));
         progressDialog.setCancelable(false);
-
+        productModels = new ArrayList<>();
+        allproduct = new ArrayList<>();
         accessDatabase = new AccessDatabase(this);
         categoryModelList = new ArrayList<>();
         categoryindex = new ArrayList<>();
         categoryindex.add(2);
         categoryindex.add(3);
         categoryindex.add(4);
-        categoryindex.add(10);
+        categoryindex.add(5);
+        categoryindex.add(8);
         categoryindex.add(13);
         categoryindex.add(16);
         brandModelList = new ArrayList<>();
         productModelList = new ArrayList<>();
-        productDetialsModelList = new ArrayList<>();
+        productModelList1 = new ArrayList<>();
         allproductDetialsModelList = new ArrayList<>();
         productids = new ArrayList<>();
         productindex = new ArrayList<>();
@@ -265,86 +269,104 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                 closeSheet2();
             }
         });
-        binding.btnchoose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<ItemCartModel> productDetailsList;
-                CreateOrderModel add_order_model = preferences.getCartData(HomeActivity.this);
-                if (add_order_model != null) {
-                    productDetailsList = add_order_model.getDetails();
-                } else {
-                    add_order_model = new CreateOrderModel();
-                    productDetailsList = new ArrayList<>();
-                }
-                //Log.e("ldkdkdkkd", productids.size() + " " + productModel.getTimes());
-                if (productids.size() == times) {
-                    binding.checkbox.setChecked(false);
-                    allproductDetialsModelList.clear();
-                    if (productModel.getFirst_stock().getQty() > 0) {
-                        ItemCartModel productDetails = new ItemCartModel();
-                        productDetails.setQty(1);
-                        productDetails.setImage(productModel.getImage());
-                        productDetails.setName(productModel.getName());
-                        productDetails.setNet_unit_price(productModel.getPrice());
-                        productDetails.setProduct_id(productModel.getId());
-                        productDetails.setProduct_batch_id("");
-                        productDetails.setProduct_code(productModel.getCode());
-                        productDetails.setDiscount(0);
-                        productDetails.setStock((int) productModel.getFirst_stock().getQty());
-
-                        if (productModel.getTax() != null) {
-                            productDetails.setTax((productModel.getPrice() * productModel.getTax().getRate()) / 100);
-                            productDetails.setTax_rate(productModel.getTax().getRate());
-                            productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
-
-                        } else {
-                            productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
-
-                        }
-                        if (productModel.getUnit() != null) {
-                            productDetails.setSale_unit(productModel.getUnit().getUnit_name());
-                        } else {
-                            productDetails.setSale_unit("n/a");
-                        }
-                        productDetails.setProducts_id(productids);
-                        productDetailsList.add(productDetails);
-                        add_order_model.setDetails(productDetailsList);
-                        productModel.setCount(1);
-                        productModelList.set(pos, productModel);
-                        productAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
-                    }
-
-                    preferences.create_update_cart(HomeActivity.this, add_order_model);
-                    getCartItemCount();
-                    closeSheet2();
-
-                } else {
-                    Toast.makeText(HomeActivity.this, getResources().getString(R.string.choose_product), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+//        binding.btnchoose.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                List<ItemCartModel> productDetailsList;
+//                CreateOrderModel add_order_model = preferences.getCartData(HomeActivity.this);
+//                if (add_order_model != null) {
+//                    productDetailsList = add_order_model.getDetails();
+//                } else {
+//                    add_order_model = new CreateOrderModel();
+//                    productDetailsList = new ArrayList<>();
+//                }
+//                //Log.e("ldkdkdkkd", productids.size() + " " + productModel.getTimes());
+//                if (productids.size() == times) {
+//                    binding.checkbox.setChecked(false);
+//                    allproductDetialsModelList.clear();
+//                    if (productModel.getFirst_stock().getQty() > 0) {
+//                        ItemCartModel productDetails = new ItemCartModel();
+//                        productDetails.setQty(1);
+//                        productDetails.setImage(productModel.getImage());
+//                        productDetails.setName(productModel.getName());
+//                        productDetails.setNet_unit_price(productModel.getPrice());
+//                        productDetails.setProduct_id(productModel.getId());
+//                        productDetails.setProduct_batch_id("");
+//                        productDetails.setProduct_code(productModel.getCode());
+//                        productDetails.setDiscount(0);
+//                        productDetails.setStock((int) productModel.getFirst_stock().getQty());
+//
+//                        if (productModel.getTax() != null) {
+//                            productDetails.setTax((productModel.getPrice() * productModel.getTax().getRate()) / 100);
+//                            productDetails.setTax_rate(productModel.getTax().getRate());
+//                            productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
+//
+//                        } else {
+//                            productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
+//
+//                        }
+//                        if (productModel.getUnit() != null) {
+//                            productDetails.setSale_unit(productModel.getUnit().getUnit_name());
+//                        } else {
+//                            productDetails.setSale_unit("n/a");
+//                        }
+//                        productDetails.setProducts_id(productids);
+//                        productDetailsList.add(productDetails);
+//                        add_order_model.setDetails(productDetailsList);
+//                        productModel.setCount(1);
+//                        productModelList.set(pos, productModel);
+//                        productAdapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
+//                    }
+//
+//                    preferences.create_update_cart(HomeActivity.this, add_order_model);
+//                    getCartItemCount();
+//                    closeSheet2();
+//
+//                } else {
+//                    Toast.makeText(HomeActivity.this, getResources().getString(R.string.choose_product), Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
 
         //  getProdusts("0", "0", "1");
         category_id = 0;
+        binding.imageupdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        accessDatabase.clear();
+
+                    }
+                }).start();
+
+                getCategory();
+                getBrands();
+                getProdusts("0", "0", "0");
+
+            }
+        });
         // binding.recviewCategory.setNestedScrollingEnabled(true);
-        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
-        if (netInfo != null) {
-            getCategory();
-            getBrands();
-            getProdusts("0", "0", "0");
-
-        } else {
-            productModelList.clear();
-
-            searchtype = "featured";
-            id = "1";
-            accessDatabase.getBrand(this);
-            accessDatabase.getCategory(this);
-            accessDatabase.getProduct(this, "1", "featured", 10, 0);
-        }
+//        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+//        if (netInfo != null) {
+//            getCategory();
+//            getBrands();
+//            getProdusts("0", "0", "0");
+//
+//        } else {
+        productModelList.clear();
+//
+        searchtype = "featured";
+        id = "1";
+        accessDatabase.getBrand(this);
+        accessDatabase.getCategory(this);
+      //  accessDatabase.getProduct(this, "1", "featured", 10, 0);
+        accessDatabase.getallProduct(HomeActivity.this);
+//        }
         binding.recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -367,7 +389,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                 if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
                         scrollY > oldScrollY) {
                     accessDatabase.getProduct(HomeActivity.this, id, searchtype, 10, productModelList.size());
-page+=1;
+                    page += 1;
                     //code to fetch more data for endless scrolling
                 }
             }
@@ -740,11 +762,12 @@ page+=1;
     }
 
     private void updateData(ProductDataModel body) {
-        this.productModelList.clear();
-        this.productModelList.addAll(body.getData());
+        this.productModelList1.clear();
+
+        this.productModelList1.addAll(body.getData());
         // Log.e("dlldldlssss", productModelList.size() + "");
-        for (int j = 0; j < productModelList.size(); j++) {
-            ProductModel productModel = productModelList.get(j);
+        for (int j = 0; j < productModelList1.size(); j++) {
+            ProductModel productModel = productModelList1.get(j);
             if (productModel.getImage() != null) {
                 setImageBitmap(Tags.Product_IMAGE_URL + productModel.getImage(), productModel, j);
             } else {
@@ -761,11 +784,10 @@ page+=1;
             }
 
 
-
             //
 
         }
-      //  accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 1);
+        //  accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 1);
 
         //   accessDatabase.getProduct(this);
 
@@ -798,9 +820,9 @@ page+=1;
 
 
     public void getCartItemCount() {
-        if (preferences.getCartData(this) != null && preferences.getCartData(this).getDetails() != null) {
+        if (preferences.getcart_olivaData(this) != null && preferences.getcart_olivaData(this).getDetails() != null) {
             //  view.onCartCountUpdate(preferences.getCartData(context).getCartModelList().size());
-            binding.setCartcount(preferences.getCartData(this).getDetails().size());
+            binding.setCartcount(preferences.getcart_olivaData(this).getDetails().size());
 
         } else {
             binding.setCartcount(0);
@@ -1025,77 +1047,298 @@ page+=1;
 
     public void addtocart(ProductModel productModel, int layoutPosition) {
         List<ItemCartModel> productDetailsList;
-        CreateOrderModel add_order_model = preferences.getCartData(HomeActivity.this);
+        CreateOrderModel add_order_model = preferences.getcart_olivaData(HomeActivity.this);
+        // productDetailsList = new ArrayList<>();
         if (add_order_model != null) {
             productDetailsList = add_order_model.getDetails();
+            if (productDetailsList == null) {
+                productDetailsList = new ArrayList<>();
+            }
         } else {
+            // Log.e(";;;;","kkxxdkjdjjdj");
             add_order_model = new CreateOrderModel();
             productDetailsList = new ArrayList<>();
         }
-if(productModel.getTax()!=null){
-    Log.e("dldldldl",productModel.getTax().getName());
-}
+        int pos = -1;
 
-        if (productModel.getFirst_stock()!=null&&productModel.getFirst_stock().getQty() > 0) {
-            ItemCartModel productDetails = new ItemCartModel();
-            productDetails.setQty(1);
-            productDetails.setImage(productModel.getImage());
-            productDetails.setName(productModel.getName());
-            productDetails.setNet_unit_price(productModel.getPrice());
-            productDetails.setProduct_id(productModel.getId());
-            productDetails.setProduct_batch_id("");
-            productDetails.setProduct_code(productModel.getCode());
-            productDetails.setDiscount(0);
-            productDetails.setStock((int) productModel.getFirst_stock().getQty());
-
-            if (productModel.getTax() != null) {
-                productDetails.setTax((productModel.getPrice() * productModel.getTax().getRate()) / 100);
-                productDetails.setTax_rate(productModel.getTax().getRate());
-                productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
-
-            } else {
-                productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
-
+        for (int i = 0; i < productDetailsList.size(); i++) {
+            //  Log.e("droooee", productDetailsList.get(i).getProduct_id() + "  " + productModel.getId());
+            if (productDetailsList.get(i).getProduct_id() == productModel.getId()) {
+                pos = i;
+                break;
             }
-            if (productModel.getUnit() != null) {
-                productDetails.setSale_unit(productModel.getUnit().getUnit_name());
-            } else {
-                productDetails.setSale_unit("n/a");
-            }
-            productDetails.setProducts_id(productids);
-            productDetailsList.add(productDetails);
-            add_order_model.setDetails(productDetailsList);
-            productModel.setCount(1);
-            productModelList.set(pos, productModel);
-            productAdapter.notifyDataSetChanged();
-        } else {
-            Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
         }
 
-        preferences.create_update_cart(HomeActivity.this, add_order_model);
-        getCartItemCount();
+        if (!categoryindex.contains(productModel.getCategory_id())) {
+
+            if (productModel.getFirst_stock() != null && productModel.getFirst_stock().getQty() > 0) {
+                if (pos == -1) {
+                    ItemCartModel productDetails = new ItemCartModel();
+                    productDetails.setQty(1);
+                    productDetails.setImage(productModel.getImageBitmap());
+                    productDetails.setName(productModel.getName());
+                    productDetails.setNet_unit_price(productModel.getPrice());
+                    productDetails.setProduct_id(productModel.getId());
+                    productDetails.setProduct_batch_id("");
+                    productDetails.setProduct_code(productModel.getCode());
+                    productDetails.setDiscount(0);
+                    productDetails.setStock((int) productModel.getFirst_stock().getQty());
+
+                    if (productModel.getTax() != null) {
+                        productDetails.setTax((productModel.getPrice() * productModel.getTax().getRate()) / 100);
+                        productDetails.setTax_rate(productModel.getTax().getRate());
+                        productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
+
+                    } else {
+                        productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
+
+                    }
+                    if (productModel.getUnit() != null) {
+                        productDetails.setSale_unit(productModel.getUnit().getUnit_name());
+                    } else {
+                        productDetails.setSale_unit("n/a");
+                    }
+                    productDetails.setProducts_id(productids);
+                    productDetailsList.add(productDetails);
+                    add_order_model.setDetails(productDetailsList);
+                    productModel.setCount(1);
+                    productModel.getFirst_stock().setQty(productModel.getFirst_stock().getQty() - 1);
+
+                } else {
+                    ItemCartModel productDetails = productDetailsList.get(pos);
+                    productDetails.setQty(1 + productDetails.getQty());
+                    productDetails.setNet_unit_price(productModel.getPrice());
+                    if (productModel.getTax() != null) {
+                        productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
+
+                    } else {
+                        productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
+
+                    }
+                    productDetailsList.remove(pos);
+                    productDetailsList.add(pos, productDetails);
+
+                    add_order_model.setDetails(productDetailsList);
+                    productModel.setCount(productDetails.getQty());
+                    productModel.getFirst_stock().setQty(productModel.getFirst_stock().getQty() - 1);
+                }
+                productModelList.set(layoutPosition, productModel);
+                productAdapter.notifyDataSetChanged();
+                accessDatabase.udatefirststock(productModel.getFirst_stock(), this);
+                accessDatabase.udateproduct(productModel, this);
+
+            } else {
+                Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            if (categoryindex.contains(productModel.getCategory_id()) && productModel.getCategory_id() != 8) {
+                if (productModel.getCan_make() > 0) {
+                    if (pos == -1) {
+                        ItemCartModel productDetails = new ItemCartModel();
+                        productDetails.setQty(1);
+                        productDetails.setImage(productModel.getImageBitmap());
+                        productDetails.setName(productModel.getName());
+                        productDetails.setNet_unit_price(productModel.getPrice());
+                        productDetails.setProduct_id(productModel.getId());
+                        productDetails.setProduct_batch_id("");
+                        productDetails.setProduct_code(productModel.getCode());
+                        productDetails.setDiscount(0);
+                        productDetails.setStock((int) productModel.getCan_make());
+
+                        if (productModel.getTax() != null) {
+                            productDetails.setTax((productModel.getPrice() * productModel.getTax().getRate()) / 100);
+                            productDetails.setTax_rate(productModel.getTax().getRate());
+                            productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
+
+                        } else {
+                            productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
+
+                        }
+                        if (productModel.getUnit() != null) {
+                            productDetails.setSale_unit(productModel.getUnit().getUnit_name());
+                        } else {
+                            productDetails.setSale_unit("n/a");
+                        }
+                        productDetails.setProducts_id(productids);
+                        productDetailsList.add(productDetails);
+                        add_order_model.setDetails(productDetailsList);
+                        productModel.setCount(1);
+                        productModel.setCan_make(productModel.getCan_make() - 1);
+
+                    } else {
+                        ItemCartModel productDetails = productDetailsList.get(pos);
+                        productDetails.setQty(1 + productDetails.getQty());
+                        productDetails.setNet_unit_price(productModel.getPrice());
+                        if (productModel.getTax() != null) {
+                            productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
+
+                        } else {
+                            productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
+
+                        }
+                        productDetailsList.remove(pos);
+                        productDetailsList.add(pos, productDetails);
+
+                        add_order_model.setDetails(productDetailsList);
+                        productModel.setCount(productDetails.getQty());
+                        productModel.setCan_make(productModel.getCan_make() - 1);
+                    }
+                    productModelList.set(layoutPosition, productModel);
+                    productAdapter.notifyDataSetChanged();
+                    //accessDatabase.udatefirststock(productModel.getFirst_stock(), this);
+                    accessDatabase.udateproduct(productModel, this);
+
+                } else {
+                    Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
+                }
+            } else {
+                productModels.clear();
+                productindex.clear();
+                // Log.e(";lll", productModel.getOffer_products().size() + "");
+                if (productModel.getOffer_products() != null && productModel.getOffer_products().size() > 0) {
+                    int can = 0;
+                    for (int i = 0; i < productModel.getOffer_products().size(); i++) {
+                        for (int j = 0; j < allproduct.size(); j++) {
+                            Log.e("sss", allproduct.get(j).getId() + " " + productModel.getOffer_products().get(i).getProduct_id());
+                            if (allproduct.get(j).getId() == productModel.getOffer_products().get(i).getProduct_id()) {
+                                productModels.add(allproduct.get(j));
+                                productindex.add(j);
+
+                            }
+                        }
+                    }
+                    Log.e("lslslls", productModels.size() + " " + productModel.getOffer_products().size());
+
+                    if (productModels.size() == productModel.getOffer_products().size()) {
+                        for (int i = 0; i < productModels.size(); i++) {
+                            ProductModel productModel1 = productModels.get(i);
+                            if (!categoryindex.contains(productModel1.getCategory_id())) {
+
+                                if (productModel1.getFirst_stock() != null && productModel1.getFirst_stock().getQty() > 0) {
+                                    productModel1.getFirst_stock().setQty(productModel1.getFirst_stock().getQty() - 1);
+                                    productModels.set(i, productModel1);
+                                } else {
+                                    can = -1;
+                                }
+                            } else {
+                                if (categoryindex.contains(productModel1.getCategory_id()) && productModel1.getCategory_id() != 8) {
+                                    if (productModel.getCan_make() > 0) {
+                                        productModel1.setCan_make(productModel1.getCan_make() - 1);
+                                        productModels.set(i, productModel1);
+
+                                    } else {
+                                        can = -1;
+                                    }
+                                }
+                            }
+                        }
+                        //  Log.e("s;;s;",can+"");
+                        if (can != -1) {
+                            if (pos == -1) {
+                                ItemCartModel productDetails = new ItemCartModel();
+                                productDetails.setQty(1);
+                                productDetails.setImage(productModel.getImageBitmap());
+                                productDetails.setName(productModel.getName());
+                                productDetails.setNet_unit_price(productModel.getPrice());
+                                productDetails.setProduct_id(productModel.getId());
+                                productDetails.setProduct_batch_id("");
+                                productDetails.setProduct_code(productModel.getCode());
+                                productDetails.setDiscount(0);
+                                productDetails.setStock((int) productModel.getCan_make());
+
+                                if (productModel.getTax() != null) {
+                                    productDetails.setTax((productModel.getPrice() * productModel.getTax().getRate()) / 100);
+                                    productDetails.setTax_rate(productModel.getTax().getRate());
+                                    productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
+
+                                } else {
+                                    productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
+
+                                }
+                                if (productModel.getUnit() != null) {
+                                    productDetails.setSale_unit(productModel.getUnit().getUnit_name());
+                                } else {
+                                    productDetails.setSale_unit("n/a");
+                                }
+                                productDetails.setProducts_id(productids);
+                                productDetailsList.add(productDetails);
+                                add_order_model.setDetails(productDetailsList);
+                                productModel.setCount(1);
+
+                            } else {
+                                ItemCartModel productDetails = productDetailsList.get(pos);
+                                productDetails.setQty(1 + productDetails.getQty());
+                                productDetails.setNet_unit_price(productModel.getPrice());
+                                if (productModel.getTax() != null) {
+                                    productDetails.setSubtotal((((productModel.getPrice() * productModel.getTax().getRate()) / 100) + productModel.getPrice()) * productDetails.getQty());
+
+                                } else {
+                                    productDetails.setSubtotal(productModel.getPrice() * productDetails.getQty());
+
+                                }
+                                productDetailsList.remove(pos);
+                                productDetailsList.add(pos, productDetails);
+
+                                add_order_model.setDetails(productDetailsList);
+                                productModel.setCount(productDetails.getQty());
+                            }
+                            productModelList.set(layoutPosition, productModel);
+
+                            //accessDatabase.udatefirststock(productModel.getFirst_stock(), this);
+                            accessDatabase.udateproduct(productModel, this);
+                            for (int i = 0; i < productModels.size(); i++) {
+                                allproduct.set(productindex.get(i), productModels.get(i));
+                                if (!categoryindex.contains(productModels.get(i).getCategory_id())) {
+                                    accessDatabase.udatefirststock(productModel.getFirst_stock(), this);
+                                }
+                                //
+                                accessDatabase.udateproduct(productModels.get(i), this);
+                            }
+                            productAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
+
+                        }
+                    } else {
+                        Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
+
+                    }
+
+                } else {
+                    Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        if (productDetailsList.size() > 0) {
+            preferences.create_update_cart_oliva(HomeActivity.this, add_order_model);
+            getCartItemCount();
+        } else {
+            preferences.clearcart_oliva(this);
+            getCartItemCount();
+        }
 
     }
 
     @Override
     public void onRetrieveDataSuccess() {
-        for (int i = 0; i < productModelList.size(); i++) {
-            if (productModelList.get(i).getFirst_stock() != null) {
-                accessDatabase.insertFirst(productModelList.get(i).getFirst_stock(), this);
+        for (int i = 0; i < productModelList1.size(); i++) {
+            if (productModelList1.get(i).getFirst_stock() != null) {
+                accessDatabase.insertFirst(productModelList1.get(i).getFirst_stock(), this);
             }
-            if (productModelList.get(i).getUnit() != null) {
-                productModelList.get(i).getUnit().setProduct_id(productModelList.get(i).getId());
-                accessDatabase.insertUnit(productModelList.get(i).getUnit(), this);
+            if (productModelList1.get(i).getUnit() != null) {
+                productModelList1.get(i).getUnit().setProduct_id(productModelList1.get(i).getId());
+                accessDatabase.insertUnit(productModelList1.get(i).getUnit(), this);
 
             }
-            if (productModelList.get(i).getTax() != null) {
-                productModelList.get(i).getTax().setProduct_id(productModelList.get(i).getId());
+            if (productModelList1.get(i).getTax() != null) {
+                productModelList1.get(i).getTax().setProduct_id(productModelList1.get(i).getId());
 
-                accessDatabase.insertTax(productModelList.get(i).getTax(), this);
+                accessDatabase.insertTax(productModelList1.get(i).getTax(), this);
 
             }
-            if (productModelList.get(i).getOffer_products() != null) {
-                accessDatabase.insertOffer(productModelList.get(i).getOffer_products(), HomeActivity.this);
+            if (productModelList1.get(i).getOffer_products() != null) {
+                Log.e("insertoffer", productModelList1.get(i).getOffer_products().size() + "");
+                accessDatabase.insertOffer(productModelList1.get(i).getOffer_products(), HomeActivity.this);
 
             }
         }
@@ -1213,17 +1456,17 @@ if(productModel.getTax()!=null){
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmapimage.compress(Bitmap.CompressFormat.JPEG, 10, stream);
                         productModel.setImageBitmap(stream.toByteArray());
-                        if (productModelList.size() > 0 && pos1 < productModelList.size()) {
-                            productModelList.set(pos1, productModel);
+                        if (productModelList1.size() > 0 && pos1 < productModelList1.size()) {
+                            productModelList1.set(pos1, productModel);
                         }
 
                         accessDatabase.insertRetrieve(productModel, HomeActivity.this);
 
-                        if (pos1 == productModelList.size() - 1) {
+                        if (pos1 == productModelList1.size() - 1) {
                             progressDialog.dismiss();
                             searchtype = "featured";
                             id = "1";
-                            productModelList.clear();
+                            productModelList1.clear();
 
                             accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 0);
                         }
@@ -1292,15 +1535,20 @@ if(productModel.getTax()!=null){
     @Override
     public void onProductDataSuccess(List<ProductModel> productModelList) {
 
-        this.productModelList.addAll(productModelList);
-        for(int i=0;i<this.productModelList.size();i++){
-            layoutpos=i;
-            accessDatabase.getTax(HomeActivity.this,this.productModelList.get(i).getId());
-            accessDatabase.getFirstStock(HomeActivity.this,this.productModelList.get(i).getId());
+                HomeActivity.this.productModelList.addAll(productModelList);
+                for (int i = 0; i < HomeActivity.this.productModelList.size(); i++) {
+                   // layoutpos = i;
+                    accessDatabase.getTax(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
+                    accessDatabase.getFirstStock(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
+                    accessDatabase.getUnit(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
+                    accessDatabase.getOffersProduct(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId() + "");
 
-        }
-        productAdapter.notifyDataSetChanged();
-      //  Log.e("ssssssss", this.productModelList.size() + "");
+                }
+
+                //  layoutpos = -1;
+                productAdapter.notifyDataSetChanged();
+
+        //  Log.e("ssssssss", this.productModelList.size() + "");
 
     }
 
@@ -1348,15 +1596,82 @@ if(productModel.getTax()!=null){
 
     @Override
     public void onTaxDataSuccess(ProductModel.Tax productModelList) {
-        ProductModel productModel=this.productModelList.get(layoutpos);
-        productModel.setTax(productModelList);
-        this.productModelList.set(layoutpos,productModel);
+        if (layoutpos != -1 && this.productModelList.size() > layoutpos) {
+            ProductModel productModel = this.productModelList.get(layoutpos);
+            productModel.setTax(productModelList);
+            this.productModelList.set(layoutpos, productModel);
+        } else if (layoutpos2 != -1 && allproduct.size() > layoutpos2) {
+            ProductModel productModel = this.allproduct.get(layoutpos2);
+            productModel.setTax(productModelList);
+            this.allproduct.set(layoutpos2, productModel);
+        }
     }
 
     @Override
     public void onFirstStockDataSuccess(ProductModel.FirstStock productModelList) {
-        ProductModel productModel=this.productModelList.get(layoutpos);
-        productModel.setFirst_stock(productModelList);
-        this.productModelList.set(layoutpos,productModel);
+        if (layoutpos != -1 && this.productModelList.size() > layoutpos) {
+            ProductModel productModel = this.productModelList.get(layoutpos);
+            productModel.setFirst_stock(productModelList);
+            this.productModelList.set(layoutpos, productModel);
+        } else if (layoutpos2 != -1 && allproduct.size() > layoutpos2) {
+            ProductModel productModel = this.allproduct.get(layoutpos2);
+            productModel.setFirst_stock(productModelList);
+            this.allproduct.set(layoutpos2, productModel);
+        }
+    }
+
+    @Override
+    public void onUnitDataSuccess(ProductModel.Unit productModelList) {
+        if (layoutpos != -1 && this.productModelList.size() > layoutpos) {
+            ProductModel productModel = this.productModelList.get(layoutpos);
+            productModel.setUnit(productModelList);
+            this.productModelList.set(layoutpos, productModel);
+        } else if (layoutpos2 != -1 && allproduct.size() > layoutpos2) {
+            ProductModel productModel = this.allproduct.get(layoutpos2);
+            productModel.setUnit(productModelList);
+            this.allproduct.set(layoutpos2, productModel);
+        }
+    }
+
+    @Override
+    public void onProductOffersDataSuccess(List<ProductModel.OfferProducts> productModelList) {
+          Log.e("ddlkdkdk",layoutpos+"  "+layoutpos2);
+        if (layoutpos != -1 && this.productModelList.size() > layoutpos) {
+            ProductModel productModel = this.productModelList.get(layoutpos);
+            productModel.setOffer_products(productModelList);
+            this.productModelList.set(layoutpos, productModel);
+            layoutpos+=1;
+        } else if (layoutpos2 != -1 && allproduct.size() > layoutpos2) {
+            ProductModel productModel = this.allproduct.get(layoutpos2);
+            productModel.setOffer_products(productModelList);
+            this.allproduct.set(layoutpos2, productModel);
+            layoutpos2+=1;
+        }
+    }
+
+    @Override
+    public void onFirstStockUpdateSuccess() {
+
+    }
+
+    @Override
+    public void onproductUpdateSuccess() {
+
+    }
+
+    @Override
+    public void onAllProductDataSuccess(List<ProductModel> productModelList) {
+        allproduct.clear();
+        allproduct.addAll(productModelList);
+
+        for (int i = 0; i < this.allproduct.size(); i++) {
+           // layoutpos2 = i;
+            accessDatabase.getTax(HomeActivity.this, this.allproduct.get(i).getId());
+            accessDatabase.getFirstStock(HomeActivity.this, this.allproduct.get(i).getId());
+            accessDatabase.getUnit(HomeActivity.this, this.allproduct.get(i).getId());
+            accessDatabase.getOffersProduct(HomeActivity.this, this.allproduct.get(i).getId() + "");
+
+        }
+        //layoutpos2 = -1;
     }
 }

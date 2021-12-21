@@ -25,6 +25,8 @@ public interface DAOInterface {
     long insertCategoryData(CategoryModel categoryModelList);
     @Query("SELECT * FROM "+ Tags.table_category)
     List<CategoryModel> getCategory();
+    @Query("SELECT * FROM "+ Tags.table_products)
+    List<ProductModel> getallProduct();
     @Query("SELECT * FROM "+ Tags.table_products+" where featured=1 limit :count offset :offest")
     List<ProductModel> getProductByFeatured(int count,int offest );
     @Query("SELECT * FROM "+ Tags.table_products+" where category_id=:id limit :count offset :offest")
@@ -50,7 +52,11 @@ public interface DAOInterface {
     ProductModel.Unit getProductunit(int id);
     @Query("SELECT * FROM "+ Tags.table_tax+" where product_id=:id")
     ProductModel.Tax getProductTax(int id);
+    @Query("SELECT * FROM "+ Tags.table_offer+" where offer_id=:id   ")
+    List<ProductModel.OfferProducts> getOffers(String id);
 
-
-
+    @Query("Update    "+ Tags.table_first_stock+" set qty =:qty where id=:id")
+    int updateProductFirstStock(int id,double qty);
+    @Query("Update    "+ Tags.table_products+" set count =:qty,can_make =:can_make  where id=:id")
+    int updateProduct(int id,double qty,int can_make);
 }
