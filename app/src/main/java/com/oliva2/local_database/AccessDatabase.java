@@ -118,6 +118,7 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long bol) {
+            Log.e("s;dldldldl",bol+"");
             if (bol>0) {
                 categoryInsertInterface.onCategoryDataInsertedSuccess();
             }

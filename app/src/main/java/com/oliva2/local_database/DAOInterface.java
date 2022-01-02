@@ -25,13 +25,13 @@ public interface DAOInterface {
     long insertCategoryData(CategoryModel categoryModelList);
     @Query("SELECT * FROM "+ Tags.table_category)
     List<CategoryModel> getCategory();
-    @Query("SELECT * FROM "+ Tags.table_products)
+    @Query("SELECT * FROM "+ Tags.table_products+","+Tags.table_tax+","+Tags.table_offer+","+Tags.table_unit+","+Tags.table_first_stock)
     List<ProductModel> getallProduct();
-    @Query("SELECT * FROM "+ Tags.table_products+" where featured=1 limit :count offset :offest")
+    @Query("SELECT * FROM "+ Tags.table_products+","+Tags.table_tax+","+Tags.table_offer+","+Tags.table_unit+","+Tags.table_first_stock+" where featured=1 limit :count offset :offest")
     List<ProductModel> getProductByFeatured(int count,int offest );
-    @Query("SELECT * FROM "+ Tags.table_products+" where category_id=:id limit :count offset :offest")
+    @Query("SELECT * FROM "+ Tags.table_products+","+Tags.table_tax+","+Tags.table_offer+","+Tags.table_unit+","+Tags.table_first_stock+" where category_id=:id limit :count offset :offest")
     List<ProductModel> getProductByCategory(String id,int count,int offest);
-    @Query("SELECT * FROM "+ Tags.table_products+" where brand_id=:id  limit :count offset :offest  ")
+    @Query("SELECT * FROM "+ Tags.table_products+","+Tags.table_tax+","+Tags.table_offer+","+Tags.table_unit+","+Tags.table_first_stock+" where brand_id=:id  limit :count offset :offest  ")
     List<ProductModel> getProductByBrand(String id,int count,int offest);
     @Insert(entity = ProductModel.FirstStock.class, onConflict = OnConflictStrategy.IGNORE)
     long insertFirstStockData(ProductModel.FirstStock firstStock);

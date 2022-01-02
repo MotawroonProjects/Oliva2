@@ -131,26 +131,6 @@ public class ProductModel implements Serializable {
         this.can_make = can_make;
     }
 
-    public void setImageBitmap() {
-        Picasso.get().load(Tags.Product_IMAGE_URL + image).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                bitmap.recycle();
-                imageBitmap = byteArray; // I don't want to set it to an Image view here
-            }
-
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-            }
-        });
-    }
 
     public byte[] getImageBitmap() {
         return imageBitmap;
@@ -200,11 +180,11 @@ public class ProductModel implements Serializable {
         return offer_products;
     }
 
-    @Entity(tableName = Tags.table_first_stock
-//            foreignKeys = {
-//                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
-//
-//            }
+    @Entity(tableName = Tags.table_first_stock,
+            foreignKeys = {
+                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
+
+            }
 
     )
     public static class FirstStock implements Serializable {
@@ -247,11 +227,11 @@ public class ProductModel implements Serializable {
         }
     }
 
-    @Entity(tableName = Tags.table_tax
-//            foreignKeys = {
-//                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
-//
-//            }
+    @Entity(tableName = Tags.table_tax,
+            foreignKeys = {
+                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
+
+            }
 
     )
     public static class Tax implements Serializable {
@@ -303,11 +283,11 @@ public class ProductModel implements Serializable {
         }
     }
 
-    @Entity(tableName = Tags.table_unit
-//            foreignKeys = {
-//                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
-//
-//            }
+    @Entity(tableName = Tags.table_unit,
+            foreignKeys = {
+                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
+
+            }
 
     )
     public static class Unit implements Serializable {
@@ -350,11 +330,11 @@ public class ProductModel implements Serializable {
         }
     }
 
-    @Entity(tableName = Tags.table_offer, indices = @Index(value = {"product_id","offer_id"}, unique = true)
-//            foreignKeys = {
-//                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
-//
-//            }
+    @Entity(tableName = Tags.table_offer, indices = @Index(value = {"product_id","offer_id"}, unique = true),
+            foreignKeys = {
+                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
+
+            }
 
 
     )

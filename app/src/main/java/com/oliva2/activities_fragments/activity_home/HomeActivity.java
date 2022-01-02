@@ -105,10 +105,11 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     private String searchtype, id;
     private int check = -1;
     private Bitmap bitmapimage;
-    private ProgressDialog progressDialog;
     private int layoutpos = 0;
-    private int productinsert, categoryinsert, brandinsert;
+    private int productinsert, categoryinsert = 0, brandinsert, taxinsert, unitinsert, firststockinsert, offerinsert;
     private int layoutpos2 = 0;
+    private boolean categoryinsertboolen = true, brandisertboolean = true, productinsertboolen = true, taxboolen = true, unitbolean = true, firststockboolean = true, offerboolean = true;
+
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -126,8 +127,8 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
 
     private void initView() {
-        progressDialog = Common.createProgressDialog(this, getString(R.string.wait));
-        progressDialog.setCancelable(false);
+//        progressDialog = Common.createProgressDialog(this, getString(R.string.wait));
+//        progressDialog.setCancelable(false);
         productModels = new ArrayList<>();
         allproduct = new ArrayList<>();
         accessDatabase = new AccessDatabase(this);
@@ -364,7 +365,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         id = "1";
         accessDatabase.getBrand(this);
         accessDatabase.getCategory(this);
-      //  accessDatabase.getProduct(this, "1", "featured", 10, 0);
+        //  accessDatabase.getProduct(this, "1", "featured", 10, 0);
         accessDatabase.getallProduct(HomeActivity.this);
 //        }
         binding.recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -535,25 +536,23 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         this.categoryModelList.addAll(categoryModelList);
         // categoryModelList.addAll(this.categoryModelList);
 
-        for (int i = 0; i < categoryModelList.size(); i++) {
-            CategoryModel categoryModel = categoryModelList.get(i);
-            if (categoryModel.getImage() != null) {
-                Log.e("lldldl", ";ss;;s;s;s" + i + " " + categoryModelList.size());
+        while (categoryinsertboolen) {
+            Log.e("ssssss",categoryinsert+""+categoryinsertboolen);
 
-                setImageBitmap(Tags.Category_IMAGE_URL + categoryModel.getImage(), categoryModel, i);
+            CategoryModel categoryModel = categoryModelList.get(categoryinsert);
+            if (categoryModel.getImage() != null) {
+                // Log.e("lldldl", ";ss;;s;s;s" + i + " " + categoryModelList.size());
+
+                setImageBitmap(Tags.Category_IMAGE_URL + categoryModel.getImage(), categoryModel, categoryinsert);
             } else {
                 Log.e("lldldl", ";ss;;s;s;s");
                 accessDatabase.insertCategory(categoryModel, this);
-                if (i == categoryModelList.size() - 1) {
-                    // Log.e("ddlll","ldldldl");
 
-                    accessDatabase.getCategory(HomeActivity.this);
-                }
             }
 
 
         }
-        accessDatabase.getCategory(HomeActivity.this);
+        // accessDatabase.getCategory(HomeActivity.this);
 
         // Log.e("lll",body.getData().size()+"");
 
@@ -660,14 +659,12 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         Log.e("fkkfkfk", body.getData().size() + "");
         brandModelList.clear();
         brandModelList.addAll(body.getData());
-        for (int i = 0; i < brandModelList.size(); i++) {
-            if (brandModelList.get(i).getImage() != null) {
-                setImageBitmap(Tags.Brand_IMAGE_URL + brandModelList.get(i).getImage(), brandModelList.get(i), i);
+        while (brandisertboolean) {
+            if (brandModelList.get(brandinsert).getImage() != null) {
+                setImageBitmap(Tags.Brand_IMAGE_URL + brandModelList.get(brandinsert).getImage(), brandModelList.get(brandinsert), brandinsert);
             } else {
-                accessDatabase.insertBrand(brandModelList.get(i), this);
-                if (i == brandModelList.size() - 1) {
-                    accessDatabase.getBrand(HomeActivity.this);
-                }
+                accessDatabase.insertBrand(brandModelList.get(brandinsert), this);
+
             }
 
 
@@ -676,7 +673,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
     @SuppressLint("NotifyDataSetChanged")
     public void getProdusts(String brand_id, String cat_id, String isfeatured) {
-        progressDialog.show();
+        //progressDialog.show();
         Log.e("kdkdkkd", userModel.getUser().getId() + "");
         productModelList.clear();
         productAdapter.notifyDataSetChanged();
@@ -766,25 +763,64 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
         this.productModelList1.addAll(body.getData());
         // Log.e("dlldldlssss", productModelList.size() + "");
-        for (int j = 0; j < productModelList1.size(); j++) {
-            ProductModel productModel = productModelList1.get(j);
+        while (productinsertboolen) {
+            ProductModel productModel = productModelList1.get(productinsert);
             if (productModel.getImage() != null) {
-                setImageBitmap(Tags.Product_IMAGE_URL + productModel.getImage(), productModel, j);
+                setImageBitmap(Tags.Product_IMAGE_URL + productModel.getImage(), productModel, productinsert);
             } else {
 
                 accessDatabase.insertRetrieve(productModel, HomeActivity.this);
-                if (j == productModelList.size() - 1) {
-                    progressDialog.dismiss();
-                    searchtype = "featured";
-                    id = "1";
-                    productModelList.clear();
-                    accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 0);
-                }
+
 
             }
 
 
             //
+
+        }
+        while (taxboolen) {
+            if (productModelList1.get(taxinsert).getTax() != null) {
+                productModelList1.get(taxinsert).getTax().setProduct_id(productModelList1.get(taxinsert).getId());
+                accessDatabase.insertTax(productModelList1.get(taxinsert).getTax(), this);
+            } else {
+                taxinsert += 1;
+                if (taxinsert == productModelList1.size()) {
+                    taxboolen = false;
+                }
+            }
+        }
+            while (unitbolean) {
+                if (productModelList1.get(unitinsert).getUnit() != null) {
+                    productModelList1.get(unitinsert).getUnit().setProduct_id(productModelList1.get(unitinsert).getId());
+                    accessDatabase.insertUnit(productModelList1.get(taxinsert).getUnit(), this);
+                } else {
+                    unitinsert += 1;
+                    if (unitinsert == productModelList1.size()) {
+                        unitbolean = false;
+                    }
+                }
+            }
+
+            while (firststockboolean) {
+                if (productModelList1.get(firststockinsert).getFirst_stock() != null) {
+                    accessDatabase.insertFirst(productModelList1.get(firststockinsert).getFirst_stock(), this);
+                } else {
+                    firststockinsert += 1;
+                    if (firststockinsert == productModelList1.size()) {
+                        firststockboolean = false;
+                    }
+                }
+            }
+
+            while (offerboolean) {
+                if (productModelList1.get(offerinsert).getOffer_products() != null) {
+                    accessDatabase.insertOffer(productModelList1.get(firststockinsert).getOffer_products(), this);
+                } else {
+                    offerinsert += 1;
+                    if (offerinsert == productModelList1.size()) {
+                        offerboolean = false;
+                    }
+                }
 
         }
         //  accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 1);
@@ -1321,34 +1357,47 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
     @Override
     public void onRetrieveDataSuccess() {
-        for (int i = 0; i < productModelList1.size(); i++) {
-            if (productModelList1.get(i).getFirst_stock() != null) {
-                accessDatabase.insertFirst(productModelList1.get(i).getFirst_stock(), this);
-            }
-            if (productModelList1.get(i).getUnit() != null) {
-                productModelList1.get(i).getUnit().setProduct_id(productModelList1.get(i).getId());
-                accessDatabase.insertUnit(productModelList1.get(i).getUnit(), this);
+        productinsert += 1;
+        Log.e("dldlldld",productinsert+"");
+        if (productinsert == productModelList1.size()) {
+            productinsertboolen = false;
 
-            }
-            if (productModelList1.get(i).getTax() != null) {
-                productModelList1.get(i).getTax().setProduct_id(productModelList1.get(i).getId());
 
-                accessDatabase.insertTax(productModelList1.get(i).getTax(), this);
-
-            }
-            if (productModelList1.get(i).getOffer_products() != null) {
-                Log.e("insertoffer", productModelList1.get(i).getOffer_products().size() + "");
-                accessDatabase.insertOffer(productModelList1.get(i).getOffer_products(), HomeActivity.this);
-
-            }
         }
+
+//        for (int i = 0; i < productModelList1.size(); i++) {
+//            if (productModelList1.get(i).getFirst_stock() != null) {
+//                accessDatabase.insertFirst(productModelList1.get(i).getFirst_stock(), this);
+//            }
+//            if (productModelList1.get(i).getUnit() != null) {
+//                productModelList1.get(i).getUnit().setProduct_id(productModelList1.get(i).getId());
+//                accessDatabase.insertUnit(productModelList1.get(i).getUnit(), this);
+//
+//            }
+//            if (productModelList1.get(i).getTax() != null) {
+//                productModelList1.get(i).getTax().setProduct_id(productModelList1.get(i).getId());
+//
+//                accessDatabase.insertTax(productModelList1.get(i).getTax(), this);
+//
+//            }
+//            if (productModelList1.get(i).getOffer_products() != null) {
+//                Log.e("insertoffer", productModelList1.get(i).getOffer_products().size() + "");
+//                accessDatabase.insertOffer(productModelList1.get(i).getOffer_products(), HomeActivity.this);
+//
+//            }
+//        }
         //  accessDatabase.getProduct(HomeActivity.this, "1", "featured");
 
     }
 
     @Override
     public void onCategoryDataInsertedSuccess() {
+        categoryinsert += 1;
+        if (categoryinsert == categoryModelList.size()) {
+            categoryinsertboolen = false;
+            accessDatabase.getCategory(HomeActivity.this);
 
+        }
     }
 
     //
@@ -1380,9 +1429,9 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                 Log.e("dssss", pos1 + "");
 
                 accessDatabase.insertCategory(categoryModel, HomeActivity.this);
-                if (pos1 == categoryModelList.size() - 1) {
-                    accessDatabase.getCategory(HomeActivity.this);
-                }
+//                if (pos1 == categoryModelList.size() - 1) {
+//                    accessDatabase.getCategory(HomeActivity.this);
+//                }
                 //  Toast.makeText(getApplicationContext(), "Image Downloaded", Toast.LENGTH_LONG).show();
             }
 
@@ -1462,14 +1511,14 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
                         accessDatabase.insertRetrieve(productModel, HomeActivity.this);
 
-                        if (pos1 == productModelList1.size() - 1) {
-                            progressDialog.dismiss();
-                            searchtype = "featured";
-                            id = "1";
-                            productModelList1.clear();
-
-                            accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 0);
-                        }
+//                        if (pos1 == productModelList1.size() - 1) {
+//                            progressDialog.dismiss();
+//                            searchtype = "featured";
+//                            id = "1";
+//                            productModelList1.clear();
+//
+//                            accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 0);
+//                        }
 
                     }
 
@@ -1535,18 +1584,18 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     @Override
     public void onProductDataSuccess(List<ProductModel> productModelList) {
 
-                HomeActivity.this.productModelList.addAll(productModelList);
-                for (int i = 0; i < HomeActivity.this.productModelList.size(); i++) {
-                   // layoutpos = i;
-                    accessDatabase.getTax(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
-                    accessDatabase.getFirstStock(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
-                    accessDatabase.getUnit(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
-                    accessDatabase.getOffersProduct(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId() + "");
+        HomeActivity.this.productModelList.addAll(productModelList);
+//        for (int i = 0; i < HomeActivity.this.productModelList.size(); i++) {
+//            // layoutpos = i;
+//            accessDatabase.getTax(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
+//            accessDatabase.getFirstStock(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
+//            accessDatabase.getUnit(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId());
+//            accessDatabase.getOffersProduct(HomeActivity.this, HomeActivity.this.productModelList.get(i).getId() + "");
+//
+//        }
 
-                }
-
-                //  layoutpos = -1;
-                productAdapter.notifyDataSetChanged();
+        //  layoutpos = -1;
+        productAdapter.notifyDataSetChanged();
 
         //  Log.e("ssssssss", this.productModelList.size() + "");
 
@@ -1559,22 +1608,44 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
     @Override
     public void onTaxDataSuccess() {
-
+        taxinsert += 1;
+        if (taxinsert == productModelList1.size()) {
+            taxboolen = false;
+        }
     }
 
     @Override
     public void onUnitDataSuccess() {
+        unitinsert += 1;
+        if (unitinsert == productModelList1.size()) {
+            unitbolean = false;
 
+        }
     }
 
     @Override
     public void onOfferDataInsertedSuccess() {
+        offerinsert += 1;
+        if (offerinsert == productModelList1.size()) {
+            productinsertboolen = false;
+            offerboolean = false;
+            //progressDialog.dismiss();
+            searchtype = "featured";
+            id = "1";
+            productModelList.clear();
+            accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 0);
+        }
 
     }
 
     @Override
     public void onBrandDataInsertedSuccess() {
-
+        brandinsert += 1;
+        Log.e("dlldl",brandinsert+"");
+        if (brandinsert == brandModelList.size()) {
+            brandisertboolean = false;
+            // accessDatabase.getBrand(this);
+        }
     }
 
     public void getOfflineProdusts(String brand_id, String cat_id, String isfeatured) {
@@ -1635,22 +1706,27 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
     @Override
     public void onProductOffersDataSuccess(List<ProductModel.OfferProducts> productModelList) {
-          Log.e("ddlkdkdk",layoutpos+"  "+layoutpos2);
+        Log.e("ddlkdkdk", layoutpos + "  " + layoutpos2);
         if (layoutpos != -1 && this.productModelList.size() > layoutpos) {
             ProductModel productModel = this.productModelList.get(layoutpos);
             productModel.setOffer_products(productModelList);
             this.productModelList.set(layoutpos, productModel);
-            layoutpos+=1;
+            layoutpos += 1;
         } else if (layoutpos2 != -1 && allproduct.size() > layoutpos2) {
             ProductModel productModel = this.allproduct.get(layoutpos2);
             productModel.setOffer_products(productModelList);
             this.allproduct.set(layoutpos2, productModel);
-            layoutpos2+=1;
+            layoutpos2 += 1;
         }
     }
 
     @Override
     public void onFirstStockUpdateSuccess() {
+        firststockinsert += 1;
+        if (firststockinsert == productModelList1.size()) {
+            firststockboolean = false;
+        }
+
 
     }
 
@@ -1664,14 +1740,6 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         allproduct.clear();
         allproduct.addAll(productModelList);
 
-        for (int i = 0; i < this.allproduct.size(); i++) {
-           // layoutpos2 = i;
-            accessDatabase.getTax(HomeActivity.this, this.allproduct.get(i).getId());
-            accessDatabase.getFirstStock(HomeActivity.this, this.allproduct.get(i).getId());
-            accessDatabase.getUnit(HomeActivity.this, this.allproduct.get(i).getId());
-            accessDatabase.getOffersProduct(HomeActivity.this, this.allproduct.get(i).getId() + "");
-
-        }
         //layoutpos2 = -1;
     }
 }
