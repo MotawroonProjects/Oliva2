@@ -95,9 +95,9 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long bol) {
-            if (bol>0) {
-                retrieveInsertInterface.onRetrieveDataSuccess();
-            }
+
+                retrieveInsertInterface.onRetrieveDataSuccess(bol);
+
         }
     }
 
@@ -110,7 +110,6 @@ public void clear(){
 
         @Override
         protected Long doInBackground(CategoryModel... lists) {
-            boolean isInserted = false;
             long data = daoInterface.insertCategoryData(lists[0]);
 
             return data;
@@ -118,10 +117,10 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long bol) {
-            Log.e("s;dldldldl",bol+"");
-            if (bol>0) {
-                categoryInsertInterface.onCategoryDataInsertedSuccess();
-            }
+           // Log.e("s;dldldldl",bol+"");
+
+                categoryInsertInterface.onCategoryDataInsertedSuccess(bol);
+
         }
     }
     public class CategoryTask extends AsyncTask<Void, Void, List<CategoryModel>> {
@@ -209,9 +208,9 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long id) {
-            if (id > 0) {
-                retrieveInsertInterface.onFirstStockDataSuccess();
-            }
+
+                retrieveInsertInterface.onFirstStockDataSuccess(id);
+
         }
     }
     public class InsertTaxTask extends AsyncTask<ProductModel.Tax, Void, Long> {
@@ -230,9 +229,9 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long id) {
-            if (id > 0) {
-                retrieveInsertInterface.onTaxDataSuccess();
-            }
+
+                retrieveInsertInterface.onTaxDataSuccess(id);
+
         }
     }
     public class InsertUnitTask extends AsyncTask<ProductModel.Unit, Void, Long> {
@@ -251,9 +250,8 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long id) {
-            if (id > 0) {
-                retrieveInsertInterface.onUnitDataSuccess();
-            }
+                retrieveInsertInterface.onUnitDataSuccess(id);
+
         }
     }
 
@@ -276,9 +274,9 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Boolean bol) {
-            if (bol) {
-                retrieveInsertInterface.onOfferDataInsertedSuccess();
-            }
+
+                retrieveInsertInterface.onOfferDataInsertedSuccess(bol);
+
         }
     }
     public class InsertBrandTask extends AsyncTask<BrandModel, Void, Long> {
@@ -298,12 +296,8 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long bol) {
-            if (bol>0) {
-                retrieveInsertInterface.onBrandDataInsertedSuccess();
-            }
-            else{
+                retrieveInsertInterface.onBrandDataInsertedSuccess(bol);
 
-            }
         }
     }
     public class BrandTask extends AsyncTask<Void, Void, List<BrandModel>> {
@@ -421,9 +415,9 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Integer id) {
-            if (id > 0) {
+
                 retrieveInsertInterface.onFirstStockUpdateSuccess();
-            }
+
         }
     }
     public class UpdateProductTask extends AsyncTask<ProductModel, Void, Long> {

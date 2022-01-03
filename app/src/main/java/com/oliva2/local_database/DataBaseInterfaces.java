@@ -12,10 +12,10 @@ public class DataBaseInterfaces {
 
 
     public interface RetrieveInsertInterface {
-        void onRetrieveDataSuccess();
+        void onRetrieveDataSuccess(long bol);
     }
     public interface CategoryInsertInterface {
-        void onCategoryDataInsertedSuccess();
+        void onCategoryDataInsertedSuccess(long bol);
     }
     public interface CategoryInterface {
         void onCategoryDataSuccess(List<CategoryModel> categoryModelList);
@@ -27,19 +27,19 @@ public class DataBaseInterfaces {
         void onAllProductDataSuccess(List<ProductModel> productModelList);
     }
     public interface FirstStockInsertInterface {
-        void onFirstStockDataSuccess();
+        void onFirstStockDataSuccess(Long id);
     }
     public interface TaxInsertInterface {
-        void onTaxDataSuccess();
+        void onTaxDataSuccess(long id);
     }
     public interface UnitInsertInterface {
-        void onUnitDataSuccess();
+        void onUnitDataSuccess(long id);
     }
     public interface OfferInsertInterface {
-        void onOfferDataInsertedSuccess();
+        void onOfferDataInsertedSuccess(boolean bol);
     }
     public interface BrandInsertInterface {
-        void onBrandDataInsertedSuccess();
+        void onBrandDataInsertedSuccess(long bol);
     }
     public interface BrandInterface {
         void onBrandDataSuccess(List<BrandModel> brandModelList);

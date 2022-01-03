@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -36,6 +37,7 @@ public class ProductModel implements Serializable {
     private double price;
     private int brand_id;
     private int featured;
+
     @ColumnInfo(name = "image", typeAffinity = ColumnInfo.BLOB)
     private byte[] imageBitmap;
 
@@ -46,18 +48,18 @@ public class ProductModel implements Serializable {
     private String code;
     @Ignore
 
-    private Unit unit;
+    @Embedded private Unit unit;
 
     private int category_id;
     @Ignore
 
-    private FirstStock first_stock;
+    @Embedded private FirstStock first_stock;
     @Ignore
 
-    private Tax tax;
+    @Embedded private Tax tax;
     @Ignore
 
-    private List<OfferProducts> offer_products;
+    @Embedded private List<OfferProducts> offer_products;
 
     public void setCount(int count) {
         this.count = count;
@@ -238,6 +240,8 @@ public class ProductModel implements Serializable {
         @PrimaryKey(autoGenerate = true)
         private int localid;
         private int id;
+        @ColumnInfo(name = "taxname")
+
         private String name;
         private int rate;
         private int product_id;
@@ -332,7 +336,7 @@ public class ProductModel implements Serializable {
 
     @Entity(tableName = Tags.table_offer, indices = @Index(value = {"product_id","offer_id"}, unique = true),
             foreignKeys = {
-                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
+                    @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "offer_id", onDelete = CASCADE)
 
             }
 

@@ -24,4 +24,8 @@ public class ProductDataModel extends StatusResponse implements Serializable {
     public ProductModel getProduct() {
         return product;
     }
+
+    public void setData(List<ProductModel> data) {
+        this.data = data;
+    }
 }
