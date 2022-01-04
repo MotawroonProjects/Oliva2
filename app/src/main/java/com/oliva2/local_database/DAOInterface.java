@@ -103,4 +103,10 @@ public interface DAOInterface {
 
     @Insert(entity = CreateOrderModel.class, onConflict = OnConflictStrategy.IGNORE)
     long insertOrderData(CreateOrderModel createOrderModel);
+    @Query("Update    " + Tags.table_products + " set count =:qty  where id=:id")
+    int updateProduct(int id, double qty);
+    @Query("SELECT * FROM " + Tags.table_order)
+    List<CreateOrderModel> getallOrders();
+    @Query("SELECT * FROM " + Tags.table_order_products + " where create_id=:id   ")
+    List<ItemCartModel> getOrderProducts(String id);
 }

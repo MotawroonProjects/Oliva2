@@ -97,7 +97,9 @@ public class AccessDatabase {
     public void udateproduct(ProductModel retrieveModel, DataBaseInterfaces.ProductupdateInterface retrieveInsertInterface) {
         new UpdateProductTask(retrieveInsertInterface).execute(retrieveModel);
     }
-
+    public void udateproductCount(ItemCartModel retrieveModel, DataBaseInterfaces.ProductupdateInterface retrieveInsertInterface) {
+        new UpdateProductCountTask(retrieveInsertInterface).execute(retrieveModel);
+    }
     public void insertCustomer(List<CustomerModel> customerModelList, DataBaseInterfaces.CustomerInsertInterface retrieveInsertInterface) {
         new InsertCustomerTask(retrieveInsertInterface).execute(customerModelList);
     }
@@ -123,6 +125,12 @@ public class AccessDatabase {
     }
     public void insertOrder(CreateOrderModel retrieveModel, DataBaseInterfaces.OrderInsertInterface retrieveInsertInterface) {
         new InsertOrderTask(retrieveInsertInterface).execute(retrieveModel);
+    }
+    public void getallOrder(DataBaseInterfaces.AllOrderInterface productInterface) {
+        new AllOrderTask(productInterface).execute();
+    }
+    public void getOrderProduct(DataBaseInterfaces.AllOrderProductInterface productInterface, String id) {
+        new ProductOrders(productInterface).execute(id);
     }
     public class InsertRetrieveTask extends AsyncTask<ProductModel, Void, Long> {
         private DataBaseInterfaces.RetrieveInsertInterface retrieveInsertInterface;
@@ -685,6 +693,71 @@ public class AccessDatabase {
 
         }
     }
+    public class UpdateProductCountTask extends AsyncTask<ItemCartModel, Void, Long> {
+        private DataBaseInterfaces.ProductupdateInterface retrieveInsertInterface;
 
+        public UpdateProductCountTask(DataBaseInterfaces.ProductupdateInterface retrieveInsertInterface) {
+            this.retrieveInsertInterface = retrieveInsertInterface;
+        }
+
+        @Override
+        protected Long doInBackground(ItemCartModel... retrieveModels) {
+            long data = daoInterface.updateProduct(retrieveModels[0].getProduct_id(), 0);
+
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(Long id) {
+            if (id > 0) {
+                retrieveInsertInterface.onproductUpdateSuccess();
+            }
+        }
+    }
+
+    public class AllOrderTask extends AsyncTask<String, Void, List<CreateOrderModel>> {
+        private DataBaseInterfaces.AllOrderInterface allOrderInterface;
+
+        public AllOrderTask(DataBaseInterfaces.AllOrderInterface allOrderInterface) {
+            this.allOrderInterface = allOrderInterface;
+        }
+
+        @Override
+        protected List<CreateOrderModel> doInBackground(String... strings) {
+
+
+            return daoInterface.getallOrders();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<CreateOrderModel> productModelList) {
+
+            allOrderInterface.onAllOrderDataSuccess(productModelList);
+        }
+
+    }
+    public class ProductOrders extends AsyncTask<String, Void, List<ItemCartModel>> {
+        private DataBaseInterfaces.AllOrderProductInterface productInterface;
+
+        public ProductOrders(DataBaseInterfaces.AllOrderProductInterface productInterface) {
+            this.productInterface = productInterface;
+        }
+
+        @Override
+        protected List<ItemCartModel> doInBackground(String... strings) {
+
+
+            return daoInterface.getOrderProducts(strings[0]);
+
+        }
+
+        @Override
+        protected void onPostExecute(List<ItemCartModel> productModelList) {
+
+            productInterface.onAllOrderProductDataSuccess(productModelList);
+        }
+
+    }
 
 }

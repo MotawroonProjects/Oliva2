@@ -51,7 +51,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CartActivity extends AppCompatActivity implements DataBaseInterfaces.CustomerInterface, DataBaseInterfaces.MainTaXInterface, DataBaseInterfaces.OrderInsertInterface, DataBaseInterfaces.ProductOrderInsertInterface {
+public class CartActivity extends AppCompatActivity implements DataBaseInterfaces.CustomerInterface, DataBaseInterfaces.MainTaXInterface, DataBaseInterfaces.OrderInsertInterface, DataBaseInterfaces.ProductOrderInsertInterface, DataBaseInterfaces.ProductupdateInterface {
     private ActivityCartBinding binding;
     private String lang;
     private Preferences preferences;
@@ -70,6 +70,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     private List<CustomerModel> customerModelList;
     private SpinnerCustomerAdapter spinnerCustomerAdapter;
     private ProgressDialog dialog;
+    private int pos;
 //    private ActivityResultLauncher<Intent> launcher;
 //    private SelectedLocation selectedLocation;
 
@@ -794,6 +795,19 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     public void onProductORderDataInsertedSuccess(Boolean bol) {
         if (bol) {
             dialog.dismiss();
+            accessDatabase.udateproductCount(list.get(pos), this);
+
+
+        }
+    }
+
+    @Override
+    public void onproductUpdateSuccess() {
+        pos+=1;
+        if(pos<list.size()){
+            accessDatabase.udateproductCount(list.get(pos),this);
+        }
+        else{
             preferences.clearcart_oliva(CartActivity.this);
             createOrderModel = preferences.getcart_olivaData(CartActivity.this);
             updateUi();

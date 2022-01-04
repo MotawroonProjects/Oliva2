@@ -3,8 +3,10 @@ package com.oliva2.local_database;
 
 import com.oliva2.models.BrandModel;
 import com.oliva2.models.CategoryModel;
+import com.oliva2.models.CreateOrderModel;
 import com.oliva2.models.CustomerGroupModel;
 import com.oliva2.models.CustomerModel;
+import com.oliva2.models.ItemCartModel;
 import com.oliva2.models.ProductModel;
 import com.oliva2.models.TaxModel;
 
@@ -109,5 +111,11 @@ public class DataBaseInterfaces {
     }
     public interface ProductOrderInsertInterface {
         void onProductORderDataInsertedSuccess(Boolean bol);
+    }
+    public interface AllOrderInterface {
+        void onAllOrderDataSuccess(List<CreateOrderModel> createOrderModels);
+    }
+    public interface AllOrderProductInterface {
+        void onAllOrderProductDataSuccess(List<ItemCartModel> itemCartModelList);
     }
 }

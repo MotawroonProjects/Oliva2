@@ -33,6 +33,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.oliva2.R;
+import com.oliva2.activities_fragments.activity_add_customer.AddCustomerActivity;
 import com.oliva2.activities_fragments.activity_cart.CartActivity;
 import com.oliva2.activities_fragments.activity_cash_register_detials.CashRegisterDetialsActivity;
 import com.oliva2.activities_fragments.activity_discount_day.DiscountDayActivity;
@@ -58,6 +59,7 @@ import com.oliva2.models.ItemCartModel;
 import com.oliva2.models.ProductDataModel;
 import com.oliva2.models.ProductDetialsModel;
 import com.oliva2.models.ProductModel;
+import com.oliva2.models.SingleOrderDataModel;
 import com.oliva2.models.StatusResponse;
 import com.oliva2.models.TaxDataModel;
 import com.oliva2.models.TaxModel;
@@ -70,6 +72,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +81,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface, DataBaseInterfaces.UnitInterface, DataBaseInterfaces.ProductOffersInterface, DataBaseInterfaces.FristStockupdateInterface, DataBaseInterfaces.ProductupdateInterface, DataBaseInterfaces.AllProductInterface, DataBaseInterfaces.CustomerGroupInsertInterface, DataBaseInterfaces.MainTaxInsertInterface, DataBaseInterfaces.CustomerInsertInterface {
+public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface, DataBaseInterfaces.UnitInterface, DataBaseInterfaces.ProductOffersInterface, DataBaseInterfaces.FristStockupdateInterface, DataBaseInterfaces.ProductupdateInterface, DataBaseInterfaces.AllProductInterface, DataBaseInterfaces.CustomerGroupInsertInterface, DataBaseInterfaces.MainTaxInsertInterface, DataBaseInterfaces.CustomerInsertInterface, DataBaseInterfaces.AllOrderInterface, DataBaseInterfaces.AllOrderProductInterface {
     private ActivityHomeBinding binding;
     private Preferences preferences;
     private UserModel userModel;
@@ -108,6 +111,8 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     private int layoutpos;
     private boolean getall = false;
     private int layoutpos2 = 0;
+    private int orderpos;
+    private List<CreateOrderModel> createOrderModels;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -186,18 +191,24 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
             checkAvialbilty();
 
         });
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            //checkAvialbilty();
+            productModelList.clear();
+            accessDatabase.getProduct(HomeActivity.this, id, searchtype, 10, 1);
+
+        });
         binding.llCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, CartActivity.class);
-                startActivity(intent);
+                launcher.launch(intent);
             }
         });
         binding.flCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, CartActivity.class);
-                startActivity(intent);
+                launcher.launch(intent);
             }
         });
         binding.flclose3.setOnClickListener(new View.OnClickListener() {
@@ -273,25 +284,11 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         binding.imageupdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        accessDatabase.clear();
+                progressDialog.show();
 
-                    }
-                }).start();
-                productinsert = 0;
-                categoryinsert = 0;
-                brandinsert = 0;
-                taxinsert = 0;
-                unitinsert = 0;
-                firststockinsert = 0;
-                offerinsert = 0;
-                getCategory();
-                getBrands();
-                getProdusts("0", "0", "0");
-                getCustomerGroup();
-                gettax();
+                accessDatabase.getallOrder(HomeActivity.this);
+
+
             }
         });
         // binding.recviewCategory.setNestedScrollingEnabled(true);
@@ -619,7 +616,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
     @SuppressLint("NotifyDataSetChanged")
     public void getProdusts(String brand_id, String cat_id, String isfeatured) {
-        progressDialog.show();
+        // progressDialog.show();
         Log.e("kdkdkkd", userModel.getUser().getId() + "");
         productModelList.clear();
         productAdapter.notifyDataSetChanged();
@@ -2113,5 +2110,137 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     @Override
     public void onCustomerDataInsertedSuccess(boolean bol) {
 
+    }
+
+
+    @Override
+    public void onAllOrderProductDataSuccess(List<ItemCartModel> itemCartModelList) {
+        CreateOrderModel createOrderModel = createOrderModels.get(orderpos);
+        createOrderModel.setDetails(itemCartModelList);
+        createOrderModels.set(orderpos, createOrderModel);
+        orderpos += 1;
+        if (orderpos == createOrderModels.size()) {
+            orderpos = 0;
+            uploadOrders();
+        } else {
+            accessDatabase.getOrderProduct(this, createOrderModels.get(orderpos).getLocalid() + "");
+
+        }
+    }
+
+    private void uploadOrders() {
+        if (orderpos == createOrderModels.size()) {
+            getdata();
+        } else {
+            createOrder(createOrderModels.get(orderpos));
+        }
+
+    }
+
+    public void createOrder(CreateOrderModel createOrderModel) {
+        try {
+
+            //dialog.show();
+
+            Api.getService(Tags.base_url)
+                    .createOrder(createOrderModel)
+                    .enqueue(new Callback<SingleOrderDataModel>() {
+                        @Override
+                        public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
+                            //  dialog.dismiss();
+                            if (response.isSuccessful()) {
+
+
+                                if (response.body() != null && response.body().getData() != null) {
+                                    orderpos += 1;
+                                    uploadOrders();
+
+                                    // navigateToOrderDetialsActivity(response.body());
+
+                                }
+
+                            } else {
+                                //  dialog.dismiss();
+                                try {
+                                    Log.e("error_code", response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (response.code() == 500) {
+                                    // Toast.makeText(CheckoutActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+
+
+                                } else {
+                                    //Toast.makeText(CheckoutActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                                    try {
+
+                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
+                            try {
+                                //dialog.dismiss();
+                                if (t.getMessage() != "") {
+                                    Log.e("error", t.getMessage());
+                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                        //      Toast.makeText(CheckoutActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        //    Toast.makeText(CheckoutActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void getdata() {
+        if(!progressDialog.isShowing()){
+            progressDialog.show();
+
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                accessDatabase.clear();
+
+            }
+        }).start();
+        orderpos = 0;
+        productinsert = 0;
+        categoryinsert = 0;
+        brandinsert = 0;
+        taxinsert = 0;
+        unitinsert = 0;
+        firststockinsert = 0;
+        offerinsert = 0;
+        getall = false;
+        getCategory();
+        getBrands();
+        getProdusts("0", "0", "0");
+        getCustomerGroup();
+        gettax();
+    }
+
+    @Override
+    public void onAllOrderDataSuccess(List<CreateOrderModel> createOrderModels) {
+        this.createOrderModels = createOrderModels;
+        if (createOrderModels.size() > 0) {
+            accessDatabase.getOrderProduct(this, createOrderModels.get(orderpos).getLocalid() + "");
+        } else {
+            getdata();
+        }
     }
 }
