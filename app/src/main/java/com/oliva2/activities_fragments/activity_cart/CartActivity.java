@@ -69,6 +69,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     private SpinnerTaxAdapter spinnerTaxAdapter;
     private List<CustomerModel> customerModelList;
     private SpinnerCustomerAdapter spinnerCustomerAdapter;
+    private ProgressDialog dialog;
 //    private ActivityResultLauncher<Intent> launcher;
 //    private SelectedLocation selectedLocation;
 
@@ -87,6 +88,9 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
 
     private void initView() {
+            dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         list = new ArrayList<>();
         cashDataModel = new CashDataModel();
         taxModelList = new ArrayList<>();
@@ -482,9 +486,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
     public void createOrder() {
 //        try {
-        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
+
         dialog.show();
         accessDatabase.insertOrder(createOrderModel, CartActivity.this);
 
@@ -775,6 +777,13 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
     @Override
     public void onOrderDataInsertedSuccess(long bol) {
+      //  Log.e("fffff",bol+"");
+        for(int i=0;i<list.size();i++){
+            ItemCartModel itemCartModel=list.get(i);
+            itemCartModel.setCreate_id((int) bol);
+            list.set(i,itemCartModel);
+        }
+        createOrderModel.setDetails(list);
         if (bol > 0) {
             accessDatabase.insertOrderProduct(createOrderModel.getDetails(), CartActivity.this);
 
@@ -784,6 +793,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     @Override
     public void onProductORderDataInsertedSuccess(Boolean bol) {
         if (bol) {
+            dialog.dismiss();
             preferences.clearcart_oliva(CartActivity.this);
             createOrderModel = preferences.getcart_olivaData(CartActivity.this);
             updateUi();
