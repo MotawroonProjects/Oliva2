@@ -12,9 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.oliva2.R;
+import com.oliva2.activities_fragments.activity_cart.CartActivity;
 import com.oliva2.adapters.SpinnerCustomerGroupAdapter;
 import com.oliva2.databinding.ActivityAddCustomerBinding;
 import com.oliva2.language.Language;
+import com.oliva2.local_database.AccessDatabase;
+import com.oliva2.local_database.DataBaseInterfaces;
 import com.oliva2.models.AddCustomerDataModel;
 import com.oliva2.models.CustomerGroupDataModel;
 import com.oliva2.models.CustomerGroupModel;
@@ -34,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddCustomerActivity extends AppCompatActivity {
+public class AddCustomerActivity extends AppCompatActivity implements DataBaseInterfaces.CustomerGroupInterface {
     private ActivityAddCustomerBinding binding;
     private Preferences preferences;
     private String lang;
@@ -42,6 +45,7 @@ public class AddCustomerActivity extends AppCompatActivity {
     private List<CustomerGroupModel> customerGroupModelList;
     private SpinnerCustomerGroupAdapter spinnerCustomerGroupAdapter;
     private UserModel userModel;
+    private AccessDatabase accessDatabase;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -59,6 +63,7 @@ public class AddCustomerActivity extends AppCompatActivity {
 
 
     private void initView() {
+        accessDatabase = new AccessDatabase(this);
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
         customerGroupModelList = new ArrayList<>();
@@ -98,7 +103,7 @@ public class AddCustomerActivity extends AppCompatActivity {
         binding.btnConfirm3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(addCustomerGroupDataModel.isDataValid(AddCustomerActivity.this)){
+                if (addCustomerGroupDataModel.isDataValid(AddCustomerActivity.this)) {
                     addcustomer();
                 }
             }
@@ -107,77 +112,79 @@ public class AddCustomerActivity extends AppCompatActivity {
     }
 
     private void getCustomerGroup() {
-        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-        dialog.setCancelable(false);
-        dialog.show();
-        customerGroupModelList.clear();
-        Api.getService(Tags.base_url)
-                .getCustomerGroup()
-                .enqueue(new Callback<CustomerGroupDataModel>() {
-                    @Override
-                    public void onResponse(Call<CustomerGroupDataModel> call, Response<CustomerGroupDataModel> response) {
-                        dialog.dismiss();
-                        if (response.isSuccessful()) {
-                            if (response.body() != null && response.body().getStatus() == 200) {
-                                if (response.body().getData() != null) {
-                                    if (response.body().getData().size() > 0) {
-                                        customerGroupModelList.add(new CustomerGroupModel(getResources().getString(R.string.choose_customer_group)));
-                                        customerGroupModelList.addAll(response.body().getData());
-                                        spinnerCustomerGroupAdapter.notifyDataSetChanged();
-                                    } else {
+        accessDatabase.getCustomerGroup(AddCustomerActivity.this);
 
-                                    }
-                                }
-                            } else {
-                                Log.e("kdkdk", response.code() + "");
-                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-
-                            }
-
-
-                        } else {
-
-
-                            switch (response.code()) {
-                                case 500:
-                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                                    break;
-                                default:
-                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                    break;
-                            }
-                            try {
-                                Log.e("error_code", response.code() + "_");
-                            } catch (NullPointerException e) {
-
-                            }
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<CustomerGroupDataModel> call, Throwable t) {
-                        try {
-                            dialog.dismiss();
-//                            binding.arrow.setVisibility(View.VISIBLE);
+//        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+//        dialog.setCancelable(false);
+//        dialog.show();
+//        customerGroupModelList.clear();
+//        Api.getService(Tags.base_url)
+//                .getCustomerGroup()
+//                .enqueue(new Callback<CustomerGroupDataModel>() {
+//                    @Override
+//                    public void onResponse(Call<CustomerGroupDataModel> call, Response<CustomerGroupDataModel> response) {
+//                        dialog.dismiss();
+//                        if (response.isSuccessful()) {
+//                            if (response.body() != null && response.body().getStatus() == 200) {
+//                                if (response.body().getData() != null) {
+//                                    if (response.body().getData().size() > 0) {
+//                                        customerGroupModelList.add(new CustomerGroupModel(getResources().getString(R.string.choose_customer_group)));
+//                                        customerGroupModelList.addAll(response.body().getData());
+//                                        spinnerCustomerGroupAdapter.notifyDataSetChanged();
+//                                    } else {
 //
-//                            binding.progBar.setVisibility(View.GONE);
-                            if (t.getMessage() != null) {
-                                Log.e("error", t.getMessage());
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
-                                } else {
-                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                        } catch (Exception e) {
-
-                        }
-                    }
-                });
+//                                    }
+//                                }
+//                            } else {
+//                                Log.e("kdkdk", response.code() + "");
+//                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//
+//                            }
+//
+//
+//                        } else {
+//
+//
+//                            switch (response.code()) {
+//                                case 500:
+//                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+//                                    break;
+//                                default:
+//                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//                                    break;
+//                            }
+//                            try {
+//                                Log.e("error_code", response.code() + "_");
+//                            } catch (NullPointerException e) {
+//
+//                            }
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<CustomerGroupDataModel> call, Throwable t) {
+//                        try {
+//                            dialog.dismiss();
+////                            binding.arrow.setVisibility(View.VISIBLE);
+////
+////                            binding.progBar.setVisibility(View.GONE);
+//                            if (t.getMessage() != null) {
+//                                Log.e("error", t.getMessage());
+//                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+//                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+//                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+//                                } else {
+//                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//
+//                        } catch (Exception e) {
+//
+//                        }
+//                    }
+//                });
 
     }
 
@@ -187,7 +194,7 @@ public class AddCustomerActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
         Api.getService(Tags.base_url)
-                .addCustomer(addCustomerGroupDataModel.getCustomer_group_id(), userModel.getUser().getId()+"", addCustomerGroupDataModel.getName(), addCustomerGroupDataModel.getEmail(),addCustomerGroupDataModel.getPhone(),addCustomerGroupDataModel.getAddress(),addCustomerGroupDataModel.getCity())
+                .addCustomer(addCustomerGroupDataModel.getCustomer_group_id(), userModel.getUser().getId() + "", addCustomerGroupDataModel.getName(), addCustomerGroupDataModel.getEmail(), addCustomerGroupDataModel.getPhone(), addCustomerGroupDataModel.getAddress(), addCustomerGroupDataModel.getCity())
                 .enqueue(new Callback<SingleCustomerDataModel>() {
                     @Override
                     public void onResponse(Call<SingleCustomerDataModel> call, Response<SingleCustomerDataModel> response) {
@@ -239,4 +246,10 @@ public class AddCustomerActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onCustomerGroupDataSuccess(List<CustomerGroupModel> customerGroupModelList) {
+        this.customerGroupModelList.add(new CustomerGroupModel(getResources().getString(R.string.choose_customer_group)));
+        this.customerGroupModelList.addAll(customerGroupModelList);
+        spinnerCustomerGroupAdapter.notifyDataSetChanged();
+    }
 }

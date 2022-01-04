@@ -1,9 +1,22 @@
 package com.oliva2.models;
 
+import static androidx.room.ForeignKey.CASCADE;
+
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+import com.oliva2.tags.Tags;
+
 import java.io.Serializable;
 import java.util.List;
+@Entity(tableName = Tags.table_order
 
+)
 public class CreateOrderModel implements Serializable {
+    @PrimaryKey(autoGenerate = true)
+    private int localid;
     private int user_id;
     private String reference_no;
     private String warehouse_id_hidden;
@@ -37,6 +50,7 @@ public class CreateOrderModel implements Serializable {
     private double order_discount;
     private double order_tax_rate;
     private String shipping_cost;
+    @Ignore
    private List<ItemCartModel> details;
 
     public int getUser_id() {
@@ -309,5 +323,14 @@ public class CreateOrderModel implements Serializable {
 
     public void setDetails(List<ItemCartModel> details) {
         this.details = details;
+    }
+
+    public int getLocalid() {
+        return localid;
+    }
+
+
+    public void setLocalid(int localid) {
+        this.localid = localid;
     }
 }

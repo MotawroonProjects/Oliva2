@@ -20,5 +20,11 @@ public class Tags {
     public static final String table_unit="unit";
     public static final String table_offer="offer";
     public static final String table_brand="brand";
+    public static final String table_main_tax="main_tax";
+    public static final String table_customer="customer";
+    public static final String table_customer_group="customer_group";
+    public static final String table_order="orders";
+    public static final String table_order_products="order_products";
+
     //https://xd.adobe.com/view/251e4b5f-c0dd-4750-9b68-012a8071f717-704d/screen/a523d130-6b5c-4ab3-af28-a692682d113e/specs/
 }

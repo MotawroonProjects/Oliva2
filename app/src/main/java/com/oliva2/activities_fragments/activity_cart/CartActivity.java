@@ -18,12 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.oliva2.R;
 import com.oliva2.activities_fragments.activity_add_customer.AddCustomerActivity;
+import com.oliva2.activities_fragments.activity_home.HomeActivity;
 import com.oliva2.activities_fragments.activity_invoice.InvoiceActivity;
 import com.oliva2.adapters.CartAdapter;
 import com.oliva2.adapters.SpinnerCustomerAdapter;
 import com.oliva2.adapters.SpinnerTaxAdapter;
 import com.oliva2.databinding.ActivityCartBinding;
 import com.oliva2.language.Language;
+import com.oliva2.local_database.AccessDatabase;
+import com.oliva2.local_database.DataBaseInterfaces;
 import com.oliva2.models.CashDataModel;
 import com.oliva2.models.CreateOrderModel;
 import com.oliva2.models.CustomerDataModel;
@@ -48,11 +51,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CartActivity extends AppCompatActivity {
+public class CartActivity extends AppCompatActivity implements DataBaseInterfaces.CustomerInterface, DataBaseInterfaces.MainTaXInterface, DataBaseInterfaces.OrderInsertInterface, DataBaseInterfaces.ProductOrderInsertInterface {
     private ActivityCartBinding binding;
     private String lang;
     private Preferences preferences;
     private UserModel userModel;
+    private AccessDatabase accessDatabase;
 
 
     private List<ItemCartModel> list;
@@ -90,6 +94,7 @@ public class CartActivity extends AppCompatActivity {
         Paper.init(this);
         lang = Paper.book().read("lang", Locale.getDefault().getLanguage());
         binding.setLang(lang);
+        accessDatabase = new AccessDatabase(this);
 
         preferences = Preferences.getInstance();
         userModel = preferences.getUserData(this);
@@ -332,6 +337,7 @@ public class CartActivity extends AppCompatActivity {
 
 
     private void updateUi() {
+        list.clear();
         if (createOrderModel != null) {
             list.addAll(createOrderModel.getDetails());
             adapter.notifyDataSetChanged();
@@ -366,7 +372,8 @@ public class CartActivity extends AppCompatActivity {
             createOrderModel.setCustomer_id_hidden("0");
 
             calculateTotal();
-        } else {
+        }
+        else {
             binding.llEmptyCart.setVisibility(View.VISIBLE);
             binding.fltotal.setVisibility(View.GONE);
 
@@ -474,76 +481,76 @@ public class CartActivity extends AppCompatActivity {
     }
 
     public void createOrder() {
-        try {
-            ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
+//        try {
+        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        accessDatabase.insertOrder(createOrderModel, CartActivity.this);
 
-
-            Api.getService(Tags.base_url)
-                    .createOrder(createOrderModel)
-                    .enqueue(new Callback<SingleOrderDataModel>() {
-                        @Override
-                        public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
-                            dialog.dismiss();
-                            if (response.isSuccessful()) {
-
-
-                                if (response.body() != null && response.body().getData() != null) {
-                                    preferences.clearcart_oliva(CartActivity.this);
-                                    createOrderModel = preferences.getcart_olivaData(CartActivity.this);
-                                    updateUi(response.body());
-
-                                    // navigateToOrderDetialsActivity(response.body());
-
-                                }
-
-                            } else {
-                                dialog.dismiss();
-                                try {
-                                    Log.e("error_code", response.errorBody().string());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                if (response.code() == 500) {
-                                    // Toast.makeText(CheckoutActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-
-
-                                } else {
-                                    //Toast.makeText(CheckoutActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-
-                                    try {
-
-                                        Log.e("error", response.code() + "_" + response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
-                            try {
-                                dialog.dismiss();
-                                if (t.getMessage() != "") {
-                                    Log.e("error", t.getMessage());
-                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                        //      Toast.makeText(CheckoutActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        //    Toast.makeText(CheckoutActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                            } catch (Exception e) {
-                            }
-                        }
-                    });
-        } catch (Exception e) {
-
-        }
+//            Api.getService(Tags.base_url)
+//                    .createOrder(createOrderModel)
+//                    .enqueue(new Callback<SingleOrderDataModel>() {
+//                        @Override
+//                        public void onResponse(Call<SingleOrderDataModel> call, Response<SingleOrderDataModel> response) {
+//                            dialog.dismiss();
+//                            if (response.isSuccessful()) {
+//
+//
+//                                if (response.body() != null && response.body().getData() != null) {
+//                                    preferences.clearcart_oliva(CartActivity.this);
+//                                    createOrderModel = preferences.getcart_olivaData(CartActivity.this);
+//                                    updateUi(response.body());
+//
+//                                    // navigateToOrderDetialsActivity(response.body());
+//
+//                                }
+//
+//                            } else {
+//                                dialog.dismiss();
+//                                try {
+//                                    Log.e("error_code", response.errorBody().string());
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                                if (response.code() == 500) {
+//                                    // Toast.makeText(CheckoutActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+//
+//
+//                                } else {
+//                                    //Toast.makeText(CheckoutActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//
+//                                    try {
+//
+//                                        Log.e("error", response.code() + "_" + response.errorBody().string());
+//                                    } catch (IOException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<SingleOrderDataModel> call, Throwable t) {
+//                            try {
+//                                dialog.dismiss();
+//                                if (t.getMessage() != "") {
+//                                    Log.e("error", t.getMessage());
+//                                    if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+//                                        //      Toast.makeText(CheckoutActivity.this, R.string.something, Toast.LENGTH_SHORT).show();
+//                                    } else {
+//                                        //    Toast.makeText(CheckoutActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//
+//                            } catch (Exception e) {
+//                            }
+//                        }
+//                    });
+//        } catch (Exception e) {
+//
+//        }
     }
 
     private void updateUi(SingleOrderDataModel body) {
@@ -588,155 +595,159 @@ public class CartActivity extends AppCompatActivity {
             binding.fltotal.setVisibility(View.GONE);
 
         }
-        Intent intent = new Intent(CartActivity.this, InvoiceActivity.class);
-        intent.putExtra("data", body.getData().getId()+"");
-        startActivity(intent);
+//        Intent intent = new Intent(CartActivity.this, InvoiceActivity.class);
+//        intent.putExtra("data", body.getData().getId() + "");
+//        startActivity(intent);
     }
 
     private void gettax() {
-        taxModelList.clear();
-        spinnerTaxAdapter.notifyDataSetChanged();
-        Api.getService(Tags.base_url)
-                .getTax()
-                .enqueue(new Callback<TaxDataModel>() {
-                    @Override
-                    public void onResponse(Call<TaxDataModel> call, Response<TaxDataModel> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body() != null && response.body().getStatus() == 200) {
-                                if (response.body().getData() != null) {
-                                    if (response.body().getData().size() > 0) {
-                                        taxModelList.add(new TaxModel(getResources().getString(R.string.choose_tax)));
-                                        taxModelList.addAll(response.body().getData());
-                                        spinnerTaxAdapter.notifyDataSetChanged();
-                                    } else {
+        accessDatabase.getTax(CartActivity.this);
 
-                                    }
-                                }
-                            } else {
-                                Log.e("kdkdk", response.code() + "");
-                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-
-                            }
-
-
-                        } else {
-
-
-                            switch (response.code()) {
-                                case 500:
-                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                                    break;
-                                default:
-                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                    break;
-                            }
-                            try {
-                                Log.e("error_code", response.code() + "_");
-                            } catch (NullPointerException e) {
-
-                            }
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<TaxDataModel> call, Throwable t) {
-                        try {
-
-//                            binding.arrow.setVisibility(View.VISIBLE);
+//        taxModelList.clear();
+//        spinnerTaxAdapter.notifyDataSetChanged();
+//        Api.getService(Tags.base_url)
+//                .getTax()
+//                .enqueue(new Callback<TaxDataModel>() {
+//                    @Override
+//                    public void onResponse(Call<TaxDataModel> call, Response<TaxDataModel> response) {
+//                        if (response.isSuccessful()) {
+//                            if (response.body() != null && response.body().getStatus() == 200) {
+//                                if (response.body().getData() != null) {
+//                                    if (response.body().getData().size() > 0) {
+//                                        taxModelList.add(new TaxModel(getResources().getString(R.string.choose_tax)));
+//                                        taxModelList.addAll(response.body().getData());
+//                                        spinnerTaxAdapter.notifyDataSetChanged();
+//                                    } else {
 //
-//                            binding.progBar.setVisibility(View.GONE);
-                            if (t.getMessage() != null) {
-                                Log.e("error", t.getMessage());
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
-                                } else {
-                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                        } catch (Exception e) {
-
-                        }
-                    }
-                });
+//                                    }
+//                                }
+//                            } else {
+//                                Log.e("kdkdk", response.code() + "");
+//                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//
+//                            }
+//
+//
+//                        } else {
+//
+//
+//                            switch (response.code()) {
+//                                case 500:
+//                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+//                                    break;
+//                                default:
+//                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//                                    break;
+//                            }
+//                            try {
+//                                Log.e("error_code", response.code() + "_");
+//                            } catch (NullPointerException e) {
+//
+//                            }
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<TaxDataModel> call, Throwable t) {
+//                        try {
+//
+////                            binding.arrow.setVisibility(View.VISIBLE);
+////
+////                            binding.progBar.setVisibility(View.GONE);
+//                            if (t.getMessage() != null) {
+//                                Log.e("error", t.getMessage());
+//                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+//                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+//                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+//                                } else {
+//                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//
+//                        } catch (Exception e) {
+//
+//                        }
+//                    }
+//                });
 
     }
 
     private void getCustomer() {
-        customerModelList.clear();
-        spinnerCustomerAdapter.notifyDataSetChanged();
-        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-        dialog.setCancelable(false);
-        dialog.show();
-        Api.getService(Tags.base_url)
-                .getCustomer()
-                .enqueue(new Callback<CustomerDataModel>() {
-                    @Override
-                    public void onResponse(Call<CustomerDataModel> call, Response<CustomerDataModel> response) {
-                        dialog.dismiss();
-                        if (response.isSuccessful()) {
-                            if (response.body() != null && response.body().getStatus() == 200) {
-                                if (response.body().getData() != null) {
-                                    if (response.body().getData().size() > 0) {
-                                        customerModelList.addAll(response.body().getData());
-                                        spinnerCustomerAdapter.notifyDataSetChanged();
-                                    } else {
+        accessDatabase.getCustomer(CartActivity.this);
 
-                                    }
-                                }
-                            } else {
-                                Log.e("kdkdk", response.code() + "");
-                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-
-                            }
-
-
-                        } else {
-
-
-                            switch (response.code()) {
-                                case 500:
-                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                                    break;
-                                default:
-                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                    break;
-                            }
-                            try {
-                                Log.e("error_code", response.code() + "_");
-                            } catch (NullPointerException e) {
-
-                            }
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<CustomerDataModel> call, Throwable t) {
-                        try {
-                            dialog.dismiss();
-//                            binding.arrow.setVisibility(View.VISIBLE);
+//        customerModelList.clear();
+//        spinnerCustomerAdapter.notifyDataSetChanged();
+//        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+//        dialog.setCancelable(false);
+//        dialog.show();
+//        Api.getService(Tags.base_url)
+//                .getCustomer()
+//                .enqueue(new Callback<CustomerDataModel>() {
+//                    @Override
+//                    public void onResponse(Call<CustomerDataModel> call, Response<CustomerDataModel> response) {
+//                        dialog.dismiss();
+//                        if (response.isSuccessful()) {
+//                            if (response.body() != null && response.body().getStatus() == 200) {
+//                                if (response.body().getData() != null) {
+//                                    if (response.body().getData().size() > 0) {
+//                                        customerModelList.addAll(response.body().getData());
+//                                        spinnerCustomerAdapter.notifyDataSetChanged();
+//                                    } else {
 //
-//                            binding.progBar.setVisibility(View.GONE);
-                            if (t.getMessage() != null) {
-                                Log.e("error", t.getMessage());
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
-                                } else {
-                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                        } catch (Exception e) {
-
-                        }
-                    }
-                });
+//                                    }
+//                                }
+//                            } else {
+//                                Log.e("kdkdk", response.code() + "");
+//                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//
+//                            }
+//
+//
+//                        } else {
+//
+//
+//                            switch (response.code()) {
+//                                case 500:
+//                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+//                                    break;
+//                                default:
+//                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//                                    break;
+//                            }
+//                            try {
+//                                Log.e("error_code", response.code() + "_");
+//                            } catch (NullPointerException e) {
+//
+//                            }
+//                        }
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<CustomerDataModel> call, Throwable t) {
+//                        try {
+//                            dialog.dismiss();
+////                            binding.arrow.setVisibility(View.VISIBLE);
+////
+////                            binding.progBar.setVisibility(View.GONE);
+//                            if (t.getMessage() != null) {
+//                                Log.e("error", t.getMessage());
+//                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+//                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+//                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+//                                } else {
+//                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//
+//                        } catch (Exception e) {
+//
+//                        }
+//                    }
+//                });
 
     }
 
@@ -745,6 +756,37 @@ public class CartActivity extends AppCompatActivity {
         super.onResume();
         if (createOrderModel != null) {
             getCustomer();
+        }
+    }
+
+    @Override
+    public void onMainTaxDataSuccess(List<TaxModel> taxModelList) {
+        this.taxModelList.clear();
+        this.taxModelList.addAll(taxModelList);
+        spinnerTaxAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCustomerDataSuccess(List<CustomerModel> customerModelList) {
+        this.customerModelList.clear();
+        this.customerModelList.addAll(customerModelList);
+        spinnerCustomerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onOrderDataInsertedSuccess(long bol) {
+        if (bol > 0) {
+            accessDatabase.insertOrderProduct(createOrderModel.getDetails(), CartActivity.this);
+
+        }
+    }
+
+    @Override
+    public void onProductORderDataInsertedSuccess(Boolean bol) {
+        if (bol) {
+            preferences.clearcart_oliva(CartActivity.this);
+            createOrderModel = preferences.getcart_olivaData(CartActivity.this);
+            updateUi();
         }
     }
 }

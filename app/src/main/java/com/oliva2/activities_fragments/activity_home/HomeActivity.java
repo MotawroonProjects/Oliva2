@@ -50,12 +50,17 @@ import com.oliva2.models.BrandModel;
 import com.oliva2.models.CategoryDataModel;
 import com.oliva2.models.CategoryModel;
 import com.oliva2.models.CreateOrderModel;
+import com.oliva2.models.CustomerDataModel;
+import com.oliva2.models.CustomerGroupDataModel;
+import com.oliva2.models.CustomerGroupModel;
 import com.oliva2.models.InvoiceModel;
 import com.oliva2.models.ItemCartModel;
 import com.oliva2.models.ProductDataModel;
 import com.oliva2.models.ProductDetialsModel;
 import com.oliva2.models.ProductModel;
 import com.oliva2.models.StatusResponse;
+import com.oliva2.models.TaxDataModel;
+import com.oliva2.models.TaxModel;
 import com.oliva2.models.UserModel;
 import com.oliva2.preferences.Preferences;
 import com.oliva2.remote.Api;
@@ -73,7 +78,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface, DataBaseInterfaces.UnitInterface, DataBaseInterfaces.ProductOffersInterface, DataBaseInterfaces.FristStockupdateInterface, DataBaseInterfaces.ProductupdateInterface, DataBaseInterfaces.AllProductInterface {
+public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface, DataBaseInterfaces.UnitInterface, DataBaseInterfaces.ProductOffersInterface, DataBaseInterfaces.FristStockupdateInterface, DataBaseInterfaces.ProductupdateInterface, DataBaseInterfaces.AllProductInterface, DataBaseInterfaces.CustomerGroupInsertInterface, DataBaseInterfaces.MainTaxInsertInterface, DataBaseInterfaces.CustomerInsertInterface {
     private ActivityHomeBinding binding;
     private Preferences preferences;
     private UserModel userModel;
@@ -93,7 +98,6 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     private ProductAdapter productAdapter;
     private ProductDetialsAdapter productDetialsAdapter;
     // private List<ProductDetialsModel> allproductDetialsModelList;
-    private List<Integer> productids;
     private List<Integer> categoryindex;
     public int category_id;
     private String searchtype, id;
@@ -139,7 +143,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         productModelList = new ArrayList<>();
         productModelList1 = new ArrayList<>();
         //  allproductDetialsModelList = new ArrayList<>();
-        productids = new ArrayList<>();
+        //productids = new ArrayList<>();
         productindex = new ArrayList<>();
         preferences = Preferences.getInstance();
         getCartItemCount();
@@ -286,7 +290,8 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                 getCategory();
                 getBrands();
                 getProdusts("0", "0", "0");
-
+                getCustomerGroup();
+                gettax();
             }
         });
         // binding.recviewCategory.setNestedScrollingEnabled(true);
@@ -362,7 +367,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
     public void closeSheet2() {
         // binding.btnAddBid.setAlpha(0);
-        productids.clear();
+        //productids.clear();
         productindex.clear();
         binding.checkbox.setChecked(false);
         //  allproductDetialsModelList.clear();
@@ -1035,7 +1040,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                     } else {
                         productDetails.setSale_unit("n/a");
                     }
-                    productDetails.setProducts_id(productids);
+                    //  productDetails.setProducts_id(productids);
                     productDetailsList.add(productDetails);
                     add_order_model.setDetails(productDetailsList);
                     productModel.setCount(1);
@@ -1067,8 +1072,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
             } else {
                 Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
             }
-        }
-        else {
+        } else {
             if (categoryindex.contains(productModel.getCategory_id()) && productModel.getCategory_id() != 8) {
                 if (productModel.getCan_make() > 0) {
                     if (pos == -1) {
@@ -1097,14 +1101,13 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                         } else {
                             productDetails.setSale_unit("n/a");
                         }
-                        productDetails.setProducts_id(productids);
+                        //productDetails.setProducts_id(productids);
                         productDetailsList.add(productDetails);
                         add_order_model.setDetails(productDetailsList);
                         productModel.setCount(1);
                         productModel.setCan_make(productModel.getCan_make() - 1);
 
-                    }
-                    else {
+                    } else {
                         ItemCartModel productDetails = productDetailsList.get(pos);
                         productDetails.setQty(1 + productDetails.getQty());
                         productDetails.setNet_unit_price(productModel.getPrice());
@@ -1130,8 +1133,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                 } else {
                     Toast.makeText(HomeActivity.this, getResources().getString(R.string.unvailable), Toast.LENGTH_LONG).show();
                 }
-            }
-            else {
+            } else {
                 productModels.clear();
                 productindex.clear();
                 // Log.e(";lll", productModel.getOffer_products().size() + "");
@@ -1147,7 +1149,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                             }
                         }
                     }
-                 //   Log.e("lslslls", productModels.size() + " " + productModel.getOffer_products().size());
+                    //   Log.e("lslslls", productModels.size() + " " + productModel.getOffer_products().size());
 
                     if (productModels.size() == productModel.getOffer_products().size()) {
                         for (int i = 0; i < productModels.size(); i++) {
@@ -1172,7 +1174,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                                 }
                             }
                         }
-                          Log.e("s;;s;",can+"");
+                        Log.e("s;;s;", can + "");
                         if (can != -1) {
                             if (pos == -1) {
                                 ItemCartModel productDetails = new ItemCartModel();
@@ -1200,7 +1202,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                                 } else {
                                     productDetails.setSale_unit("n/a");
                                 }
-                                productDetails.setProducts_id(productids);
+                                //productDetails.setProducts_id(productids);
                                 productDetailsList.add(productDetails);
                                 add_order_model.setDetails(productDetailsList);
                                 productModel.setCount(1);
@@ -1374,7 +1376,8 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                 searchtype = "featured";
                 id = "1";
                 productModelList.clear();
-                accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 0);
+                accessDatabase.getallProduct(this);
+                //  accessDatabase.getProduct(HomeActivity.this, "1", "featured", 10, 0);
             } else {
                 insertproduct();
             }
@@ -1874,6 +1877,241 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         allproduct.addAll(productModelList);
 //Log.e("d;;d;d;",allproduct.size()+"");
         layoutpos2 = 0;
-        accessDatabase.getTax(this, allproduct.get(layoutpos2).getId());
+        if (allproduct.size() > 0) {
+            accessDatabase.getTax(this, allproduct.get(layoutpos2).getId());
+        }
+    }
+
+    private void getCustomerGroup() {
+
+        // customerGroupModelList.clear();
+        Api.getService(Tags.base_url)
+                .getCustomerGroup()
+                .enqueue(new Callback<CustomerGroupDataModel>() {
+                    @Override
+                    public void onResponse(Call<CustomerGroupDataModel> call, Response<CustomerGroupDataModel> response) {
+                        // dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null && response.body().getStatus() == 200) {
+                                if (response.body().getData() != null) {
+                                    if (response.body().getData().size() > 0) {
+                                        //  customerGroupModelList.add(new CustomerGroupModel(getResources().getString(R.string.choose_customer_group)));
+                                        //customerGroupModelList.addAll(response.body().getData());
+                                        //spinnerCustomerGroupAdapter.notifyDataSetChanged();
+                                        accessDatabase.insertCustomerGroup(response.body().getData(), HomeActivity.this);
+
+                                    } else {
+
+                                    }
+                                }
+                            } else {
+                                Log.e("kdkdk", response.code() + "");
+                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                            }
+
+
+                        } else {
+
+
+                            switch (response.code()) {
+                                case 500:
+                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                    break;
+                                default:
+                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                            try {
+                                Log.e("error_code", response.code() + "_");
+                            } catch (NullPointerException e) {
+
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CustomerGroupDataModel> call, Throwable t) {
+                        try {
+                            //   dialog.dismiss();
+//                            binding.arrow.setVisibility(View.VISIBLE);
+//
+//                            binding.progBar.setVisibility(View.GONE);
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
+
+    private void gettax() {
+
+        Api.getService(Tags.base_url)
+                .getTax()
+                .enqueue(new Callback<TaxDataModel>() {
+                    @Override
+                    public void onResponse(Call<TaxDataModel> call, Response<TaxDataModel> response) {
+                        if (response.isSuccessful()) {
+                            if (response.body() != null && response.body().getStatus() == 200) {
+                                if (response.body().getData() != null) {
+                                    if (response.body().getData().size() > 0) {
+                                        accessDatabase.insertMainTax(response.body().getData(), HomeActivity.this);
+                                    } else {
+
+                                    }
+                                }
+                            } else {
+                                Log.e("kdkdk", response.code() + "");
+                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                            }
+
+
+                        } else {
+
+
+                            switch (response.code()) {
+                                case 500:
+                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                    break;
+                                default:
+                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                            try {
+                                Log.e("error_code", response.code() + "_");
+                            } catch (NullPointerException e) {
+
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<TaxDataModel> call, Throwable t) {
+                        try {
+
+//                            binding.arrow.setVisibility(View.VISIBLE);
+//
+//                            binding.progBar.setVisibility(View.GONE);
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
+
+    private void getCustomer() {
+
+
+        Api.getService(Tags.base_url)
+                .getCustomer()
+                .enqueue(new Callback<CustomerDataModel>() {
+                    @Override
+                    public void onResponse(Call<CustomerDataModel> call, Response<CustomerDataModel> response) {
+                        //dialog.dismiss();
+                        if (response.isSuccessful()) {
+                            if (response.body() != null && response.body().getStatus() == 200) {
+                                if (response.body().getData() != null) {
+                                    if (response.body().getData().size() > 0) {
+                                        accessDatabase.insertCustomer(response.body().getData(), HomeActivity.this);
+
+                                    } else {
+
+                                    }
+                                }
+                            } else {
+                                Log.e("kdkdk", response.code() + "");
+                                //  Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+
+                            }
+
+
+                        } else {
+
+
+                            switch (response.code()) {
+                                case 500:
+                                    //   Toast.makeText(SignUpActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                    break;
+                                default:
+                                    //   Toast.makeText(SignUpActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                            try {
+                                Log.e("error_code", response.code() + "_");
+                            } catch (NullPointerException e) {
+
+                            }
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<CustomerDataModel> call, Throwable t) {
+                        try {
+                            //  dialog.dismiss();
+//                            binding.arrow.setVisibility(View.VISIBLE);
+//
+//                            binding.progBar.setVisibility(View.GONE);
+                            if (t.getMessage() != null) {
+                                Log.e("error", t.getMessage());
+                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+                                    //     Toast.makeText(SignUpActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+                                } else if (t.getMessage().toLowerCase().contains("socket") || t.getMessage().toLowerCase().contains("canceled")) {
+                                } else {
+                                    //  Toast.makeText(SignUpActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+    }
+
+    @Override
+    public void onCustomerGroupInsertedSuccess(boolean bol) {
+        if (bol) {
+            getCustomer();
+        }
+    }
+
+    @Override
+    public void onMainTaxInsertedSuccess(boolean bol) {
+
+    }
+
+    @Override
+    public void onCustomerDataInsertedSuccess(boolean bol) {
+
     }
 }

@@ -1,9 +1,26 @@
 package com.oliva2.models;
 
+import static androidx.room.ForeignKey.CASCADE;
+
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
+
+import com.oliva2.tags.Tags;
+
 import java.io.Serializable;
 import java.util.List;
+@Entity(tableName = Tags.table_order_products,
+        foreignKeys = {
+                @ForeignKey(entity = CreateOrderModel.class, parentColumns = "localid", childColumns = "create_id", onDelete = CASCADE)
 
+        }
+
+)
 public class ItemCartModel implements Serializable {
+    @PrimaryKey(autoGenerate = true)
+    private int localid;
+    private int create_id;
     private String product_code;
     private int qty;
     private String product_batch_id;
@@ -11,7 +28,7 @@ public class ItemCartModel implements Serializable {
     private String sale_unit;
     private double net_unit_price;
     private double discount;
-    private List<Integer> products_id;
+    //private List<Integer> products_id;
     private double tax_rate;
     private double tax;
     private double subtotal;
@@ -76,13 +93,13 @@ public class ItemCartModel implements Serializable {
         this.discount = discount;
     }
 
-    public List<Integer> getProducts_id() {
-        return products_id;
-    }
-
-    public void setProducts_id(List<Integer> products_id) {
-        this.products_id = products_id;
-    }
+//    public List<Integer> getProducts_id() {
+//        return products_id;
+//    }
+//
+//    public void setProducts_id(List<Integer> products_id) {
+//        this.products_id = products_id;
+//    }
 
     public double getTax_rate() {
         return tax_rate;
@@ -130,5 +147,21 @@ public class ItemCartModel implements Serializable {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public int getCreate_id() {
+        return create_id;
+    }
+
+    public void setCreate_id(int create_id) {
+        this.create_id = create_id;
+    }
+
+    public int getLocalid() {
+        return localid;
+    }
+
+    public void setLocalid(int localid) {
+        this.localid = localid;
     }
 }

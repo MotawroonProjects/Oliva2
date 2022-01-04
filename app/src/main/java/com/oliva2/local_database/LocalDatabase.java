@@ -8,10 +8,15 @@ import androidx.room.RoomDatabase;
 
 import com.oliva2.models.BrandModel;
 import com.oliva2.models.CategoryModel;
+import com.oliva2.models.CreateOrderModel;
+import com.oliva2.models.CustomerGroupModel;
+import com.oliva2.models.CustomerModel;
+import com.oliva2.models.ItemCartModel;
 import com.oliva2.models.ProductModel;
+import com.oliva2.models.TaxModel;
 import com.oliva2.tags.Tags;
 
-@Database(version = 1,entities = {CategoryModel.class,ProductModel.class,ProductModel.FirstStock.class,ProductModel.Tax.class,ProductModel.Unit.class,ProductModel.OfferProducts.class, BrandModel.class},exportSchema = false)
+@Database(version = 1, entities = {CategoryModel.class, ProductModel.class, ProductModel.FirstStock.class, ProductModel.Tax.class, ProductModel.Unit.class, ProductModel.OfferProducts.class, BrandModel.class, CustomerGroupModel.class, CustomerModel.class, TaxModel.class, CreateOrderModel.class, ItemCartModel.class}, exportSchema = false)
 public abstract class LocalDatabase extends RoomDatabase {
 
     public static volatile LocalDatabase instance = null;
@@ -19,10 +24,10 @@ public abstract class LocalDatabase extends RoomDatabase {
     public abstract DAOInterface daoInterface();
 
 
-    public static LocalDatabase newInstance(Context context){
-        if (instance==null){
-            synchronized (LocalDatabase.class){
-                instance = Room.databaseBuilder(context.getApplicationContext(),LocalDatabase.class, Tags.DATABASE_NAME)
+    public static LocalDatabase newInstance(Context context) {
+        if (instance == null) {
+            synchronized (LocalDatabase.class) {
+                instance = Room.databaseBuilder(context.getApplicationContext(), LocalDatabase.class, Tags.DATABASE_NAME)
                         .build();
             }
         }

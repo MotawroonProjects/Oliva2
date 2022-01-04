@@ -8,7 +8,12 @@ import android.widget.Toast;
 
 import com.oliva2.models.BrandModel;
 import com.oliva2.models.CategoryModel;
+import com.oliva2.models.CreateOrderModel;
+import com.oliva2.models.CustomerGroupModel;
+import com.oliva2.models.CustomerModel;
+import com.oliva2.models.ItemCartModel;
 import com.oliva2.models.ProductModel;
+import com.oliva2.models.TaxModel;
 
 import java.util.List;
 
@@ -21,9 +26,9 @@ public class AccessDatabase {
         daoInterface = localDatabase.daoInterface();
     }
 
-public void clear(){
+    public void clear() {
         localDatabase.clearAllTables();
-}
+    }
 
     public void getCategory(DataBaseInterfaces.CategoryInterface categoryInterface) {
         new CategoryTask(categoryInterface).execute();
@@ -32,30 +37,39 @@ public void clear(){
     public void getBrand(DataBaseInterfaces.BrandInterface brandInterface) {
         new BrandTask(brandInterface).execute();
     }
-    public void getProduct(DataBaseInterfaces.ProductInterface productInterface, String id, String name,int count,int offest) {
-        new ProductTask(productInterface).execute(id,name,count+"",offest+"");
+
+    public void getProduct(DataBaseInterfaces.ProductInterface productInterface, String id, String name, int count, int offest) {
+        new ProductTask(productInterface).execute(id, name, count + "", offest + "");
     }
+
     public void getallProduct(DataBaseInterfaces.AllProductInterface productInterface) {
         new AllProductTask(productInterface).execute();
     }
+
     public void getTax(DataBaseInterfaces.TaxInterface productInterface, int id) {
-        new TaxTask(productInterface).execute(id+"");
+        new TaxTask(productInterface).execute(id + "");
     }
+
     public void getFirstStock(DataBaseInterfaces.FirstStockInterface productInterface, int id) {
-        new FirstStockTask(productInterface).execute(id+"");
+        new FirstStockTask(productInterface).execute(id + "");
     }
+
     public void getUnit(DataBaseInterfaces.UnitInterface productInterface, int id) {
-        new UnitTask(productInterface).execute(id+"");
+        new UnitTask(productInterface).execute(id + "");
     }
+
     public void getOffersProduct(DataBaseInterfaces.ProductOffersInterface productInterface, String id) {
         new ProductOffers(productInterface).execute(id);
     }
+
     public void insertCategory(CategoryModel retrieveModel, DataBaseInterfaces.CategoryInsertInterface retrieveInsertInterface) {
         new InsertCategoryTask(retrieveInsertInterface).execute(retrieveModel);
     }
+
     public void insertFirst(ProductModel.FirstStock retrieveModel, DataBaseInterfaces.FirstStockInsertInterface retrieveInsertInterface) {
         new InsertFisrtStockTask(retrieveInsertInterface).execute(retrieveModel);
     }
+
     public void insertTax(ProductModel.Tax retrieveModel, DataBaseInterfaces.TaxInsertInterface retrieveInsertInterface) {
         new InsertTaxTask(retrieveInsertInterface).execute(retrieveModel);
     }
@@ -63,20 +77,52 @@ public void clear(){
     public void insertUnit(ProductModel.Unit retrieveModel, DataBaseInterfaces.UnitInsertInterface retrieveInsertInterface) {
         new InsertUnitTask(retrieveInsertInterface).execute(retrieveModel);
     }
+
     public void insertRetrieve(ProductModel retrieveModel, DataBaseInterfaces.RetrieveInsertInterface retrieveInsertInterface) {
         new InsertRetrieveTask(retrieveInsertInterface).execute(retrieveModel);
     }
+
     public void insertOffer(List<ProductModel.OfferProducts> retrieveModel, DataBaseInterfaces.OfferInsertInterface retrieveInsertInterface) {
         new InsertOfferTask(retrieveInsertInterface).execute(retrieveModel);
     }
+
     public void insertBrand(BrandModel retrieveModel, DataBaseInterfaces.BrandInsertInterface retrieveInsertInterface) {
         new InsertBrandTask(retrieveInsertInterface).execute(retrieveModel);
     }
+
     public void udatefirststock(ProductModel.FirstStock retrieveModel, DataBaseInterfaces.FristStockupdateInterface retrieveInsertInterface) {
         new UpdateFirstStockTask(retrieveInsertInterface).execute(retrieveModel);
     }
+
     public void udateproduct(ProductModel retrieveModel, DataBaseInterfaces.ProductupdateInterface retrieveInsertInterface) {
         new UpdateProductTask(retrieveInsertInterface).execute(retrieveModel);
+    }
+
+    public void insertCustomer(List<CustomerModel> customerModelList, DataBaseInterfaces.CustomerInsertInterface retrieveInsertInterface) {
+        new InsertCustomerTask(retrieveInsertInterface).execute(customerModelList);
+    }
+
+    public void insertCustomerGroup(List<CustomerGroupModel> retrieveModel, DataBaseInterfaces.CustomerGroupInsertInterface retrieveInsertInterface) {
+        new InsertCustomerGroupTask(retrieveInsertInterface).execute(retrieveModel);
+    }
+
+    public void insertMainTax(List<TaxModel> taxModelList, DataBaseInterfaces.MainTaxInsertInterface retrieveInsertInterface) {
+        new InsertMainTaxTask(retrieveInsertInterface).execute(taxModelList);
+    }
+    public void getTax(DataBaseInterfaces.MainTaXInterface mainTaXInterface) {
+        new MainTax(mainTaXInterface).execute();
+    }
+    public void getCustomer(DataBaseInterfaces.CustomerInterface customerInterface) {
+        new Customer(customerInterface).execute();
+    }
+    public void getCustomerGroup(DataBaseInterfaces.CustomerGroupInterface customerGroupInterface) {
+        new CustomerGroup(customerGroupInterface).execute();
+    }
+    public void insertOrderProduct(List<ItemCartModel> itemCartModelList, DataBaseInterfaces.ProductOrderInsertInterface retrieveInsertInterface) {
+        new InsertProductOrderTask(retrieveInsertInterface).execute(itemCartModelList);
+    }
+    public void insertOrder(CreateOrderModel retrieveModel, DataBaseInterfaces.OrderInsertInterface retrieveInsertInterface) {
+        new InsertOrderTask(retrieveInsertInterface).execute(retrieveModel);
     }
     public class InsertRetrieveTask extends AsyncTask<ProductModel, Void, Long> {
         private DataBaseInterfaces.RetrieveInsertInterface retrieveInsertInterface;
@@ -88,7 +134,7 @@ public void clear(){
         @Override
         protected Long doInBackground(ProductModel... lists) {
             boolean isInserted = false;
-            long  data = daoInterface.insertRetrieveData(lists[0]);
+            long data = daoInterface.insertRetrieveData(lists[0]);
 
             return data;
         }
@@ -96,7 +142,7 @@ public void clear(){
         @Override
         protected void onPostExecute(Long bol) {
 
-                retrieveInsertInterface.onRetrieveDataSuccess(bol);
+            retrieveInsertInterface.onRetrieveDataSuccess(bol);
 
         }
     }
@@ -117,12 +163,13 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long bol) {
-           // Log.e("s;dldldldl",bol+"");
+            // Log.e("s;dldldldl",bol+"");
 
-                categoryInsertInterface.onCategoryDataInsertedSuccess(bol);
+            categoryInsertInterface.onCategoryDataInsertedSuccess(bol);
 
         }
     }
+
     public class CategoryTask extends AsyncTask<Void, Void, List<CategoryModel>> {
         private DataBaseInterfaces.CategoryInterface categoryInterface;
 
@@ -140,6 +187,7 @@ public void clear(){
             categoryInterface.onCategoryDataSuccess(categoryModelList);
         }
     }
+
     public class ProductTask extends AsyncTask<String, Void, List<ProductModel>> {
         private DataBaseInterfaces.ProductInterface productInterface;
 
@@ -150,16 +198,15 @@ public void clear(){
         @Override
         protected List<ProductModel> doInBackground(String... strings) {
 
-           if(strings[1].equals("featured")){
-              // Log.e("lllll",strings[1]);
-            return daoInterface.getProductByFeatured(Integer.parseInt(strings[2]),Integer.parseInt(strings[3]));}
-            else  if(strings[1].equals("brand_id")){
-                Log.e("d;d;;d",strings[2]+" "+strings[3]);
-               return daoInterface.getProductByBrand(strings[0],Integer.parseInt(strings[2]),Integer.parseInt(strings[3]));
-           }
-            else {
-               return daoInterface.getProductByCategory(strings[0],Integer.parseInt(strings[2]),Integer.parseInt(strings[3]));
-           }
+            if (strings[1].equals("featured")) {
+                // Log.e("lllll",strings[1]);
+                return daoInterface.getProductByFeatured(Integer.parseInt(strings[2]), Integer.parseInt(strings[3]));
+            } else if (strings[1].equals("brand_id")) {
+                Log.e("d;d;;d", strings[2] + " " + strings[3]);
+                return daoInterface.getProductByBrand(strings[0], Integer.parseInt(strings[2]), Integer.parseInt(strings[3]));
+            } else {
+                return daoInterface.getProductByCategory(strings[0], Integer.parseInt(strings[2]), Integer.parseInt(strings[3]));
+            }
         }
 
         @Override
@@ -169,6 +216,7 @@ public void clear(){
         }
 
     }
+
     public class AllProductTask extends AsyncTask<String, Void, List<ProductModel>> {
         private DataBaseInterfaces.AllProductInterface productInterface;
 
@@ -180,7 +228,7 @@ public void clear(){
         protected List<ProductModel> doInBackground(String... strings) {
 
 
-                return daoInterface.getallProduct();
+            return daoInterface.getallProduct();
 
         }
 
@@ -209,10 +257,11 @@ public void clear(){
         @Override
         protected void onPostExecute(Long id) {
 
-                retrieveInsertInterface.onFirstStockDataSuccess(id);
+            retrieveInsertInterface.onFirstStockDataSuccess(id);
 
         }
     }
+
     public class InsertTaxTask extends AsyncTask<ProductModel.Tax, Void, Long> {
         private DataBaseInterfaces.TaxInsertInterface retrieveInsertInterface;
 
@@ -221,7 +270,7 @@ public void clear(){
         }
 
         @Override
-        protected Long doInBackground(ProductModel.Tax ... retrieveModels) {
+        protected Long doInBackground(ProductModel.Tax... retrieveModels) {
             long data = daoInterface.insertTaxData(retrieveModels[0]);
 
             return data;
@@ -230,10 +279,11 @@ public void clear(){
         @Override
         protected void onPostExecute(Long id) {
 
-                retrieveInsertInterface.onTaxDataSuccess(id);
+            retrieveInsertInterface.onTaxDataSuccess(id);
 
         }
     }
+
     public class InsertUnitTask extends AsyncTask<ProductModel.Unit, Void, Long> {
         private DataBaseInterfaces.UnitInsertInterface retrieveInsertInterface;
 
@@ -250,7 +300,7 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long id) {
-                retrieveInsertInterface.onUnitDataSuccess(id);
+            retrieveInsertInterface.onUnitDataSuccess(id);
 
         }
     }
@@ -275,10 +325,11 @@ public void clear(){
         @Override
         protected void onPostExecute(Boolean bol) {
 
-                retrieveInsertInterface.onOfferDataInsertedSuccess(bol);
+            retrieveInsertInterface.onOfferDataInsertedSuccess(bol);
 
         }
     }
+
     public class InsertBrandTask extends AsyncTask<BrandModel, Void, Long> {
         private DataBaseInterfaces.BrandInsertInterface retrieveInsertInterface;
 
@@ -296,10 +347,11 @@ public void clear(){
 
         @Override
         protected void onPostExecute(Long bol) {
-                retrieveInsertInterface.onBrandDataInsertedSuccess(bol);
+            retrieveInsertInterface.onBrandDataInsertedSuccess(bol);
 
         }
     }
+
     public class BrandTask extends AsyncTask<Void, Void, List<BrandModel>> {
         private DataBaseInterfaces.BrandInterface brandInterface;
 
@@ -317,6 +369,7 @@ public void clear(){
             brandInterface.onBrandDataSuccess(brandModelList);
         }
     }
+
     public class TaxTask extends AsyncTask<String, Void, ProductModel.Tax> {
         private DataBaseInterfaces.TaxInterface productInterface;
 
@@ -327,7 +380,7 @@ public void clear(){
         @Override
         protected ProductModel.Tax doInBackground(String... strings) {
 
-        return daoInterface.getProductTax(Integer.parseInt(strings[0]));
+            return daoInterface.getProductTax(Integer.parseInt(strings[0]));
         }
 
         @Override
@@ -337,6 +390,7 @@ public void clear(){
         }
 
     }
+
     public class FirstStockTask extends AsyncTask<String, Void, ProductModel.FirstStock> {
         private DataBaseInterfaces.FirstStockInterface productInterface;
 
@@ -357,6 +411,7 @@ public void clear(){
         }
 
     }
+
     public class UnitTask extends AsyncTask<String, Void, ProductModel.Unit> {
         private DataBaseInterfaces.UnitInterface productInterface;
 
@@ -377,6 +432,7 @@ public void clear(){
         }
 
     }
+
     public class ProductOffers extends AsyncTask<String, Void, List<ProductModel.OfferProducts>> {
         private DataBaseInterfaces.ProductOffersInterface productInterface;
 
@@ -388,7 +444,7 @@ public void clear(){
         protected List<ProductModel.OfferProducts> doInBackground(String... strings) {
 
 
-                return daoInterface.getOffers(strings[0]);
+            return daoInterface.getOffers(strings[0]);
 
         }
 
@@ -399,6 +455,7 @@ public void clear(){
         }
 
     }
+
     public class UpdateFirstStockTask extends AsyncTask<ProductModel.FirstStock, Void, Integer> {
         private DataBaseInterfaces.FristStockupdateInterface retrieveInsertInterface;
 
@@ -408,7 +465,7 @@ public void clear(){
 
         @Override
         protected Integer doInBackground(ProductModel.FirstStock... retrieveModels) {
-            int data = daoInterface.updateProductFirstStock(retrieveModels[0].getId(),retrieveModels[0].getQty());
+            int data = daoInterface.updateProductFirstStock(retrieveModels[0].getId(), retrieveModels[0].getQty());
 
             return data;
         }
@@ -416,10 +473,11 @@ public void clear(){
         @Override
         protected void onPostExecute(Integer id) {
 
-                retrieveInsertInterface.onFirstStockUpdateSuccess();
+            retrieveInsertInterface.onFirstStockUpdateSuccess();
 
         }
     }
+
     public class UpdateProductTask extends AsyncTask<ProductModel, Void, Long> {
         private DataBaseInterfaces.ProductupdateInterface retrieveInsertInterface;
 
@@ -429,7 +487,7 @@ public void clear(){
 
         @Override
         protected Long doInBackground(ProductModel... retrieveModels) {
-            long data = daoInterface.updateProduct(retrieveModels[0].getId(),retrieveModels[0].getCount(),retrieveModels[0].getCan_make());
+            long data = daoInterface.updateProduct(retrieveModels[0].getId(), retrieveModels[0].getCount(), retrieveModels[0].getCan_make());
 
             return data;
         }
@@ -439,6 +497,192 @@ public void clear(){
             if (id > 0) {
                 retrieveInsertInterface.onproductUpdateSuccess();
             }
+        }
+    }
+
+    public class InsertCustomerTask extends AsyncTask<List<CustomerModel>, Void, Boolean> {
+        private DataBaseInterfaces.CustomerInsertInterface customerInsertInterface;
+
+        public InsertCustomerTask(DataBaseInterfaces.CustomerInsertInterface customerInsertInterface) {
+            this.customerInsertInterface = customerInsertInterface;
+        }
+
+        @Override
+        protected Boolean doInBackground(List<CustomerModel>... lists) {
+            boolean isInserted = false;
+            long[] data = daoInterface.insertCustomer(lists[0]);
+            if (data != null && data.length > 0) {
+                isInserted = true;
+            }
+            return isInserted;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bol) {
+
+            customerInsertInterface.onCustomerDataInsertedSuccess(bol);
+
+        }
+    }
+
+    public class InsertCustomerGroupTask extends AsyncTask<List<CustomerGroupModel>, Void, Boolean> {
+        private DataBaseInterfaces.CustomerGroupInsertInterface customerGroupInsertInterface;
+
+        public InsertCustomerGroupTask(DataBaseInterfaces.CustomerGroupInsertInterface customerGroupInsertInterface) {
+            this.customerGroupInsertInterface = customerGroupInsertInterface;
+        }
+
+        @Override
+        protected Boolean doInBackground(List<CustomerGroupModel>... lists) {
+            boolean isInserted = false;
+            long[] data = daoInterface.insertCustomerGroup(lists[0]);
+            if (data != null && data.length > 0) {
+                isInserted = true;
+            }
+            return isInserted;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bol) {
+
+            customerGroupInsertInterface.onCustomerGroupInsertedSuccess(bol);
+
+        }
+    }
+
+    public class InsertMainTaxTask extends AsyncTask<List<TaxModel>, Void, Boolean> {
+        private DataBaseInterfaces.MainTaxInsertInterface mainTaxInsertInterface;
+
+        public InsertMainTaxTask(DataBaseInterfaces.MainTaxInsertInterface mainTaxInsertInterface) {
+            this.mainTaxInsertInterface = mainTaxInsertInterface;
+        }
+
+        @Override
+        protected Boolean doInBackground(List<TaxModel>... lists) {
+            boolean isInserted = false;
+            long[] data = daoInterface.insertTax(lists[0]);
+            if (data != null && data.length > 0) {
+                isInserted = true;
+            }
+            return isInserted;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bol) {
+
+            mainTaxInsertInterface.onMainTaxInsertedSuccess(bol);
+
+        }
+    }
+    public class MainTax extends AsyncTask<String, Void, List<TaxModel>> {
+        private DataBaseInterfaces.MainTaXInterface mainTaXInterface;
+
+        public MainTax(DataBaseInterfaces.MainTaXInterface mainTaXInterface) {
+            this.mainTaXInterface = mainTaXInterface;
+        }
+
+        @Override
+        protected List<TaxModel> doInBackground(String... strings) {
+
+
+            return daoInterface.getMainTax();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<TaxModel> taxModelList) {
+
+            mainTaXInterface.onMainTaxDataSuccess(taxModelList);
+        }
+
+    }
+    public class Customer extends AsyncTask<String, Void, List<CustomerModel>> {
+        private DataBaseInterfaces.CustomerInterface customerInterface;
+
+        public Customer(DataBaseInterfaces.CustomerInterface customerInterface) {
+            this.customerInterface = customerInterface;
+        }
+
+        @Override
+        protected List<CustomerModel> doInBackground(String... strings) {
+
+
+            return daoInterface.getCustomer();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<CustomerModel> customerModelList) {
+
+            customerInterface.onCustomerDataSuccess(customerModelList);
+        }
+
+    }
+    public class CustomerGroup extends AsyncTask<String, Void, List<CustomerGroupModel>> {
+        private DataBaseInterfaces.CustomerGroupInterface customerGroupInterface;
+
+        public CustomerGroup(DataBaseInterfaces.CustomerGroupInterface customerGroupInterface) {
+            this.customerGroupInterface = customerGroupInterface;
+        }
+
+        @Override
+        protected List<CustomerGroupModel> doInBackground(String... strings) {
+
+
+            return daoInterface.getCustomerGroup();
+
+        }
+
+        @Override
+        protected void onPostExecute(List<CustomerGroupModel> customerGroupModelList) {
+
+            customerGroupInterface.onCustomerGroupDataSuccess(customerGroupModelList);
+        }
+
+    }
+    public class InsertOrderTask extends AsyncTask<CreateOrderModel, Void, Long> {
+        private DataBaseInterfaces.OrderInsertInterface orderInsertInterface;
+
+        public InsertOrderTask(DataBaseInterfaces.OrderInsertInterface orderInsertInterface) {
+            this.orderInsertInterface = orderInsertInterface;
+        }
+
+        @Override
+        protected Long doInBackground(CreateOrderModel... lists) {
+            boolean isInserted = false;
+            long data = daoInterface.insertOrderData(lists[0]);
+
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(Long bol) {
+            orderInsertInterface.onOrderDataInsertedSuccess(bol);
+
+        }
+    }
+    public class InsertProductOrderTask extends AsyncTask<List<ItemCartModel>, Void, Boolean> {
+        private DataBaseInterfaces.ProductOrderInsertInterface productOrderInsertInterface;
+
+        public InsertProductOrderTask(DataBaseInterfaces.ProductOrderInsertInterface productOrderInsertInterface) {
+            this.productOrderInsertInterface = productOrderInsertInterface;
+        }
+
+        @Override
+        protected Boolean doInBackground(List<ItemCartModel>... lists) {
+            boolean isInserted = false;
+            long[] data = daoInterface.insertOrderProducts(lists[0]);
+            if (data != null && data.length > 0) {
+                isInserted = true;
+            }
+            return isInserted;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bol) {
+
+            productOrderInsertInterface.onProductORderDataInsertedSuccess(bol);
+
         }
     }
 
