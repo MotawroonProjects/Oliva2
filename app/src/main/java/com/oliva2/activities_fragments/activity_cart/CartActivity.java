@@ -42,7 +42,10 @@ import com.oliva2.share.Common;
 import com.oliva2.tags.Tags;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -71,6 +74,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     private SpinnerCustomerAdapter spinnerCustomerAdapter;
     private ProgressDialog dialog;
     private int pos;
+    private List<Integer> categoryindex;
 //    private ActivityResultLauncher<Intent> launcher;
 //    private SelectedLocation selectedLocation;
 
@@ -89,7 +93,17 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
 
     private void initView() {
-            dialog = Common.createProgressDialog(this, getString(R.string.wait));
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.ENGLISH);
+
+        categoryindex = new ArrayList<>();
+        categoryindex.add(2);
+        categoryindex.add(3);
+        categoryindex.add(4);
+        categoryindex.add(5);
+        categoryindex.add(8);
+        categoryindex.add(13);
+        categoryindex.add(16);
+        dialog = Common.createProgressDialog(this, getString(R.string.wait));
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         list = new ArrayList<>();
@@ -119,23 +133,18 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
                 //  Log.e("dkdkk",position+"");
                 Log.e("sssseeee", spinnerpos + "");
 
-                if (spinnerpos > 0) {
-                    if (createOrderModel != null) {
 
-                        createOrderModel.setOrder_tax_rate(taxModelList.get(spinnerpos).getRate());
-                        createOrderModel.setOrder_tax((createOrderModel.getTotal_price() * createOrderModel.getOrder_tax_rate()) / 100);
-                        createOrderModel.setGrand_total(total - ((total * createOrderModel.getOrder_discount()) / 100) + createOrderModel.getOrder_tax());
-                        cashDataModel.setPaying_amount(Math.round(createOrderModel.getGrand_total()) + "");
-                        cashDataModel.setPaid_amount(Math.round(createOrderModel.getGrand_total()) + "");
-                        binding.tvTotal.setText(String.format("%.2f", createOrderModel.getGrand_total()));
-                    }
-                } else {
-                    if (createOrderModel != null) {
+                if (createOrderModel != null) {
 
-                        createOrderModel.setOrder_tax(0);
-                        createOrderModel.setOrder_tax_rate(0);
-                    }
+                    createOrderModel.setOrder_tax_rate(taxModelList.get(spinnerpos).getRate());
+                    createOrderModel.setOrder_tax((createOrderModel.getTotal_price() * createOrderModel.getOrder_tax_rate()) / 100);
+                    createOrderModel.setGrand_total(total - ((total * createOrderModel.getOrder_discount()) / 100) + createOrderModel.getOrder_tax());
+                    cashDataModel.setPaying_amount(Math.round(createOrderModel.getGrand_total()) + "");
+                    cashDataModel.setPaid_amount(Math.round(createOrderModel.getGrand_total()) + "");
+                    binding.tvTotal.setText(String.format("%.2f", createOrderModel.getGrand_total()));
                 }
+
+
             }
 
 
@@ -153,6 +162,10 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
                     createOrderModel.setCustomer_id_hidden(customerModelList.get(spinnerpos).getId() + "");
                     createOrderModel.setCustomer_id(customerModelList.get(spinnerpos).getId() + "");
+                    createOrderModel.setClientname(customerModelList.get(spinnerpos).getName());
+                    createOrderModel.setAddress(customerModelList.get(spinnerpos).getAddress());
+                    createOrderModel.setPhone(customerModelList.get(spinnerpos).getPhone_number());
+
                 }
 
             }
@@ -171,6 +184,9 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CartActivity.this, AddCustomerActivity.class);
+                if (customerModelList.size() > 0) {
+                    intent.putExtra("id", customerModelList.get(customerModelList.size() - 1).getId() + 1);
+                }
                 startActivity(intent);
             }
         });
@@ -274,6 +290,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
                 createOrderModel.setReference_no(binding.editInvoicenum.getText().toString());
                 createOrderModel.setSale_status("3");
                 createOrderModel.setPaid_by_id("3");
+                createOrderModel.setDate(dateFormat2.format(new Date(System.currentTimeMillis())));
                 if (!createOrderModel.getCustomer_id().equals("0")) {
                     createOrder();
                 } else {
@@ -298,12 +315,12 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     }
 
     private void checktax() {
-        if (binding.spinnerTax.getSelectedItemPosition() == 0) {
-            Toast.makeText(this, R.string.choose_tax, Toast.LENGTH_LONG).show();
-        } else {
-            binding.tvtax.setText(String.format("%.2f", createOrderModel.getOrder_tax()));
-            closeSheet();
-        }
+//        if (binding.spinnerTax.getSelectedItemPosition() == 0) {
+//            Toast.makeText(this, R.string.choose_tax, Toast.LENGTH_LONG).show();
+//        } else {
+        binding.tvtax.setText(String.format("%.2f", createOrderModel.getOrder_tax()));
+        closeSheet();
+//        }
     }
 
     private void checkData() {
@@ -314,6 +331,12 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
             createOrderModel.setPayment_note(cashDataModel.getPayment_note());
             createOrderModel.setSale_note(cashDataModel.getSale_note());
             closeSheet4();
+            createOrderModel.setSale_status("1");
+            if (!createOrderModel.getCustomer_id().equals("0")) {
+                createOrder();
+            } else {
+                Toast.makeText(CartActivity.this, getResources().getString(R.string.choose_customer), Toast.LENGTH_LONG).show();
+            }
 
         }
     }
@@ -377,8 +400,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
             createOrderModel.setCustomer_id_hidden("0");
 
             calculateTotal();
-        }
-        else {
+        } else {
             binding.llEmptyCart.setVisibility(View.VISIBLE);
             binding.fltotal.setVisibility(View.GONE);
 
@@ -454,12 +476,6 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     public void closeSheet4() {
         // binding.btnAddBid.setAlpha(0);
         binding.expandLayout4.collapse(true);
-        createOrderModel.setSale_status("1");
-        if (!createOrderModel.getCustomer_id().equals("0")) {
-            createOrder();
-        } else {
-            Toast.makeText(CartActivity.this, getResources().getString(R.string.choose_customer), Toast.LENGTH_LONG).show();
-        }
 
 
     }
@@ -473,6 +489,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     }
 
     public void deleteItem(ItemCartModel model2, int adapterPosition) {
+        pos = -1;
         list.remove(adapterPosition);
         adapter.notifyItemRemoved(adapterPosition);
         createOrderModel.setDetails(list);
@@ -483,11 +500,38 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
             binding.fltotal.setVisibility(View.GONE);
             preferences.clearcart_oliva(this);
         }
+        if (!categoryindex.contains(model2.getCategory_id())) {
+            accessDatabase.udateproduct(model2.getProduct_id(), 0, 0, this);
+            accessDatabase.udateproduct(model2.getProduct_id(), model2.getQty(), this);
+        } else {
+            if (model2.getCategory_id() == 8) {
+                Log.e("dd;d;d;;", model2.getCategory_ids() + " " + model2.getProducts_id());
+                List<String> productids = Arrays.asList(model2.getProducts_id().replace("[", "").replace("]", "").replace(" ", "").split(","));
+                List<String> categoryids = Arrays.asList(model2.getCategory_ids().replace("[", "").replace("]", "").replace(" ", "").split(","));
+                for (int i = 0; i < productids.size(); i++) {
+                    if (categoryindex.contains(Integer.parseInt(categoryids.get(i)))) {
+                        accessDatabase.udateproduct(Integer.parseInt(productids.get(i)), 0, model2.getQty(), this);
+                        //  accessDatabase.udateproduct(model2.getProduct_id(), model2.getQty(), this);
+
+                    } else {
+                        accessDatabase.udateproduct(Integer.parseInt(productids.get(i)), 0, 0, this);
+                        accessDatabase.udateproduct(Integer.parseInt(productids.get(i)), model2.getQty(), this);
+                    }
+
+                }
+                accessDatabase.udateproduct(model2.getProduct_id(), 0, 0, this);
+
+
+            } else {
+                accessDatabase.udateproduct(model2.getProduct_id(), 0, model2.getQty(), this);
+
+            }
+        }
     }
 
     public void createOrder() {
 //        try {
-
+        pos = 0;
         dialog.show();
         accessDatabase.insertOrder(createOrderModel, CartActivity.this);
 
@@ -598,9 +642,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
             binding.fltotal.setVisibility(View.GONE);
 
         }
-//        Intent intent = new Intent(CartActivity.this, InvoiceActivity.class);
-//        intent.putExtra("data", body.getData().getId() + "");
-//        startActivity(intent);
+
     }
 
     private void gettax() {
@@ -757,9 +799,9 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     @Override
     protected void onResume() {
         super.onResume();
-        if (createOrderModel != null) {
-            getCustomer();
-        }
+//        if (createOrderModel != null) {
+        getCustomer();
+        //  }
     }
 
     @Override
@@ -778,11 +820,11 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
     @Override
     public void onOrderDataInsertedSuccess(long bol) {
-      //  Log.e("fffff",bol+"");
-        for(int i=0;i<list.size();i++){
-            ItemCartModel itemCartModel=list.get(i);
+        //  Log.e("fffff",bol+"");
+        for (int i = 0; i < list.size(); i++) {
+            ItemCartModel itemCartModel = list.get(i);
             itemCartModel.setCreate_id((int) bol);
-            list.set(i,itemCartModel);
+            list.set(i, itemCartModel);
         }
         createOrderModel.setDetails(list);
         if (bol > 0) {
@@ -794,6 +836,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     @Override
     public void onProductORderDataInsertedSuccess(Boolean bol) {
         if (bol) {
+
             dialog.dismiss();
             accessDatabase.udateproductCount(list.get(pos), this);
 
@@ -803,14 +846,20 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
     @Override
     public void onproductUpdateSuccess() {
-        pos+=1;
-        if(pos<list.size()){
-            accessDatabase.udateproductCount(list.get(pos),this);
+        CreateOrderModel createOrderModel = this.createOrderModel;
+        if (pos != -1) {
+            pos += 1;
+            if (pos < list.size()) {
+                accessDatabase.udateproductCount(list.get(pos), this);
+            } else {
+                preferences.clearcart_oliva(CartActivity.this);
+                this.createOrderModel = preferences.getcart_olivaData(CartActivity.this);
+                updateUi();
+            }
+            Intent intent = new Intent(CartActivity.this, InvoiceActivity.class);
+            intent.putExtra("data", createOrderModel);
+            startActivity(intent);
         }
-        else{
-            preferences.clearcart_oliva(CartActivity.this);
-            createOrderModel = preferences.getcart_olivaData(CartActivity.this);
-            updateUi();
-        }
+
     }
 }

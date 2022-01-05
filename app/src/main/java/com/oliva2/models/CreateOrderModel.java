@@ -50,6 +50,11 @@ public class CreateOrderModel implements Serializable {
     private double order_discount;
     private double order_tax_rate;
     private String shipping_cost;
+    private String date;
+    private String clientname;
+    private String address;
+    private String phone;
+
     @Ignore
    private List<ItemCartModel> details;
 
@@ -332,5 +337,37 @@ public class CreateOrderModel implements Serializable {
 
     public void setLocalid(int localid) {
         this.localid = localid;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getClientname() {
+        return clientname;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setClientname(String clientname) {
+        this.clientname = clientname;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

@@ -2,13 +2,14 @@ package com.oliva2.models;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import com.oliva2.tags.Tags;
 
 import java.io.Serializable;
 
-@Entity(tableName = Tags.table_customer_group
+@Entity(tableName = Tags.table_customer_group,indices = @Index(value = {"id"}, unique = true)
 //        foreignKeys = {
 //                @ForeignKey(entity = CategoryModel.class, parentColumns = "id", childColumns = "category_id", onDelete = CASCADE)
 //

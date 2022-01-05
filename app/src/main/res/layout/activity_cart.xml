@@ -378,6 +378,7 @@
                         android:layout_height="40dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
+                        android:visibility="gone"
                         android:background="@drawable/rounded_red">
 
                         <ImageView
@@ -928,7 +929,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/flclose4"
+                        android:id="@+id/flclose3"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_gravity="center_vertical"
@@ -1283,7 +1284,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/flclose3"
+                        android:id="@+id/flclose4"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_gravity="center_vertical"

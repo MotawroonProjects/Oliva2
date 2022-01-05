@@ -2,6 +2,7 @@ package com.oliva2.activities_fragments.activity_add_customer;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.oliva2.local_database.DataBaseInterfaces;
 import com.oliva2.models.AddCustomerDataModel;
 import com.oliva2.models.CustomerGroupDataModel;
 import com.oliva2.models.CustomerGroupModel;
+import com.oliva2.models.CustomerModel;
 import com.oliva2.models.SingleCustomerDataModel;
 import com.oliva2.models.UserModel;
 import com.oliva2.preferences.Preferences;
@@ -37,7 +39,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddCustomerActivity extends AppCompatActivity implements DataBaseInterfaces.CustomerGroupInterface {
+public class AddCustomerActivity extends AppCompatActivity implements DataBaseInterfaces.CustomerGroupInterface, DataBaseInterfaces.CustmomerInsertInterface {
     private ActivityAddCustomerBinding binding;
     private Preferences preferences;
     private String lang;
@@ -46,6 +48,7 @@ public class AddCustomerActivity extends AppCompatActivity implements DataBaseIn
     private SpinnerCustomerGroupAdapter spinnerCustomerGroupAdapter;
     private UserModel userModel;
     private AccessDatabase accessDatabase;
+    private int id;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -57,8 +60,13 @@ public class AddCustomerActivity extends AppCompatActivity implements DataBaseIn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_customer);
+        getDataFromIntent();
         initView();
 
+    }
+    private void getDataFromIntent() {
+        Intent intent = getIntent();
+        id = intent.getIntExtra("id",1);
     }
 
 
@@ -189,60 +197,71 @@ public class AddCustomerActivity extends AppCompatActivity implements DataBaseIn
     }
 
     private void addcustomer() {
-
-        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-        dialog.setCancelable(false);
-        dialog.show();
-        Api.getService(Tags.base_url)
-                .addCustomer(addCustomerGroupDataModel.getCustomer_group_id(), userModel.getUser().getId() + "", addCustomerGroupDataModel.getName(), addCustomerGroupDataModel.getEmail(), addCustomerGroupDataModel.getPhone(), addCustomerGroupDataModel.getAddress(), addCustomerGroupDataModel.getCity())
-                .enqueue(new Callback<SingleCustomerDataModel>() {
-                    @Override
-                    public void onResponse(Call<SingleCustomerDataModel> call, Response<SingleCustomerDataModel> response) {
-                        dialog.dismiss();
-                        Log.e("rriir", response.body().getStatus() + "");
-                        if (response.isSuccessful()) {
-                            if (response.body().getStatus() == 200) {
-
-                                finish();
-
-                            }
-
-                        } else {
-                            try {
-                                Log.e("mmmmmmmmmm", response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-
-                            if (response.code() == 500) {
-                                Toast.makeText(AddCustomerActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Log.e("mmmmmmmmmm", response.code() + "");
-
-                                // Toast.makeText(LoginActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<SingleCustomerDataModel> call, Throwable t) {
-                        try {
-                            dialog.dismiss();
-                            if (t.getMessage() != null) {
-                                Log.e("msg_category_error", t.toString() + "__");
-
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    //  Toast.makeText(LoginActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    //    Toast.makeText(LoginActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        } catch (Exception e) {
-                            Log.e("Error", e.getMessage() + "__");
-                        }
-                    }
-                });
+        CustomerModel customerModel=new CustomerModel();
+        customerModel.setCustomer_group_id(Integer.parseInt(addCustomerGroupDataModel.getCustomer_group_id()));
+        customerModel.setUser_id(userModel.getUser().getId());
+        customerModel.setName(addCustomerGroupDataModel.getName());
+        customerModel.setEmail(addCustomerGroupDataModel.getEmail());
+        customerModel.setPhone_number(addCustomerGroupDataModel.getPhone());
+        customerModel.setAddress(addCustomerGroupDataModel.getAddress());
+        customerModel.setCity(addCustomerGroupDataModel.getCity());
+        customerModel.setId(id);
+        customerModel.setType("local");
+        accessDatabase.insertCustomer(customerModel,this);
+        //Log.e("dlldldldl",customerModel.getId()+"");
+//        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+//        dialog.setCancelable(false);
+//        dialog.show();
+//        Api.getService(Tags.base_url)
+//                .addCustomer(addCustomerGroupDataModel.getCustomer_group_id(), userModel.getUser().getId() + "", addCustomerGroupDataModel.getName(), addCustomerGroupDataModel.getEmail(), addCustomerGroupDataModel.getPhone(), addCustomerGroupDataModel.getAddress(), addCustomerGroupDataModel.getCity())
+//                .enqueue(new Callback<SingleCustomerDataModel>() {
+//                    @Override
+//                    public void onResponse(Call<SingleCustomerDataModel> call, Response<SingleCustomerDataModel> response) {
+//                        dialog.dismiss();
+//                        Log.e("rriir", response.body().getStatus() + "");
+//                        if (response.isSuccessful()) {
+//                            if (response.body().getStatus() == 200) {
+//
+//                                finish();
+//
+//                            }
+//
+//                        } else {
+//                            try {
+//                                Log.e("mmmmmmmmmm", response.errorBody().string());
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//
+//                            if (response.code() == 500) {
+//                                Toast.makeText(AddCustomerActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Log.e("mmmmmmmmmm", response.code() + "");
+//
+//                                // Toast.makeText(LoginActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<SingleCustomerDataModel> call, Throwable t) {
+//                        try {
+//                            dialog.dismiss();
+//                            if (t.getMessage() != null) {
+//                                Log.e("msg_category_error", t.toString() + "__");
+//
+//                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+//                                    //  Toast.makeText(LoginActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+//                                } else {
+//                                    //    Toast.makeText(LoginActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        } catch (Exception e) {
+//                            Log.e("Error", e.getMessage() + "__");
+//                        }
+//                    }
+//                });
 
     }
 
@@ -251,5 +270,12 @@ public class AddCustomerActivity extends AppCompatActivity implements DataBaseIn
         this.customerGroupModelList.add(new CustomerGroupModel(getResources().getString(R.string.choose_customer_group)));
         this.customerGroupModelList.addAll(customerGroupModelList);
         spinnerCustomerGroupAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCustmomerInsertedSuccess(long bol) {
+        if(bol>0){
+            finish();
+        }
     }
 }

@@ -86,7 +86,8 @@ public interface Service {
             @Field("email") String email,
             @Field("phone_number") String phone_number,
             @Field("address") String address,
-            @Field("city") String city
+            @Field("city") String city,
+            @Field("id") String id
 
 
     );

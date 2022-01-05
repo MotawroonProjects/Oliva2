@@ -92,5 +92,6 @@
     <string name="gift_card_payment">دفع بطاقة الهدايا</string>
     <string name="deposite_payment">دفع الإيداع</string>
     <string name="closing">اقفال</string>
+    <string name="tax1">ضريبه</string>
 
 </resources>

@@ -118,4 +118,7 @@ public class DataBaseInterfaces {
     public interface AllOrderProductInterface {
         void onAllOrderProductDataSuccess(List<ItemCartModel> itemCartModelList);
     }
+    public interface CustmomerInsertInterface {
+        void onCustmomerInsertedSuccess(long bol);
+    }
 }

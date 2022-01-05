@@ -38,7 +38,9 @@ import com.oliva2.R;
 import com.oliva2.adapters.ProductBillAdapter;
 import com.oliva2.databinding.ActivityInvoiceBinding;
 import com.oliva2.language.Language;
+import com.oliva2.models.CreateOrderModel;
 import com.oliva2.models.InvoiceDataModel;
+import com.oliva2.models.ItemCartModel;
 import com.oliva2.models.PdfDocumentAdpter;
 import com.oliva2.models.UserModel;
 import com.oliva2.preferences.Preferences;
@@ -66,9 +68,9 @@ public class InvoiceActivity extends AppCompatActivity {
     private ActivityInvoiceBinding binding;
     private Preferences preferences;
     private String lang;
-    private String salid;
+    private CreateOrderModel createOrderModel;
     private UserModel userModel;
-    private List<InvoiceDataModel.LimsProductSaleData> limsProductSaleDataList;
+    private List<ItemCartModel> limsProductSaleDataList;
     private ProductBillAdapter productBillAdapter;
     private final String write_perm = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private final int write_req = 100;
@@ -98,7 +100,7 @@ public class InvoiceActivity extends AppCompatActivity {
 
     private void getDataFromIntent() {
         Intent intent = getIntent();
-        salid = intent.getStringExtra("data");
+        createOrderModel = (CreateOrderModel) intent.getSerializableExtra("data");
     }
 
     private void checkWritePermission() {
@@ -139,80 +141,20 @@ public class InvoiceActivity extends AppCompatActivity {
         binding.recView.setNestedScrollingEnabled(false);
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(productBillAdapter);
-        getlastInvoice();
+       // getlastInvoice();
         binding.btnConfirm3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkWritePermission();
             }
         });
+        updateData();
     }
 
-    public void getlastInvoice() {
-        Log.e("kdkkd", salid);
-        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
-        dialog.setCancelable(false);
-        dialog.show();
-
-
-        Api.getService(Tags.base_url)
-                .getInv(salid, userModel.getUser().getId() + "")
-                .enqueue(new Callback<InvoiceDataModel>() {
-                    @Override
-                    public void onResponse(Call<InvoiceDataModel> call, Response<InvoiceDataModel> response) {
-                        dialog.dismiss();
-                        if (response.isSuccessful() && response.body() != null) {
-                            if (response.body().getStatus() == 200) {
-                                if (response.body() != null) {
-                                    updateData(response.body());
-
-//                                    Intent intent = new Intent(HomeActivity.this, InvoiceActivity.class);
-//                                    intent.putExtra("data", response.body().getData());
-//                                    startActivity(intent);
-                                } else if (response.body().getStatus() == 400) {
-                                    Toast.makeText(InvoiceActivity.this, getResources().getString(R.string.no_invoice), Toast.LENGTH_SHORT).show();
-
-                                }
-
-                            }
-
-                        } else {
-                            if (response.code() == 500) {
-                                Toast.makeText(InvoiceActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Log.e("ERROR", response.message() + "");
-
-                                //     Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                            }
-
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<InvoiceDataModel> call, Throwable t) {
-                        try {
-                            dialog.dismiss();
-                            if (t.getMessage() != null) {
-                                Log.e("msg_category_error", t.getMessage() + "__");
-
-                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
-                                    // Toast.makeText(SubscriptionActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    //Toast.makeText(SubscriptionActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        } catch (Exception e) {
-                            Log.e("Error", e.getMessage() + "__");
-                        }
-                    }
-                });
-    }
-
-    private void updateData(InvoiceDataModel body) {
-        binding.setModel(body);
-        if (body.getLims_product_sale_data() != null && body.getLims_product_sale_data().size() > 0) {
-            limsProductSaleDataList.addAll(body.getLims_product_sale_data());
+    private void updateData() {
+        binding.setModel(createOrderModel);
+        if (createOrderModel.getDetails() != null && createOrderModel.getDetails().size() > 0) {
+            limsProductSaleDataList.addAll(createOrderModel.getDetails());
             productBillAdapter.notifyDataSetChanged();
             Log.e("dkdkdk", limsProductSaleDataList.size() + "");
 //      if(limsProductSaleDataList.size()>3){
@@ -222,6 +164,82 @@ public class InvoiceActivity extends AppCompatActivity {
 //
 //      }
         }
+    }
+
+//    public void getlastInvoice() {
+//        Log.e("kdkkd", salid);
+//        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
+//        dialog.setCancelable(false);
+//        dialog.show();
+//
+//
+//        Api.getService(Tags.base_url)
+//                .getInv(salid, userModel.getUser().getId() + "")
+//                .enqueue(new Callback<InvoiceDataModel>() {
+//                    @Override
+//                    public void onResponse(Call<InvoiceDataModel> call, Response<InvoiceDataModel> response) {
+//                        dialog.dismiss();
+//                        if (response.isSuccessful() && response.body() != null) {
+//                            if (response.body().getStatus() == 200) {
+//                                if (response.body() != null) {
+//                                    updateData(response.body());
+//
+////                                    Intent intent = new Intent(HomeActivity.this, InvoiceActivity.class);
+////                                    intent.putExtra("data", response.body().getData());
+////                                    startActivity(intent);
+//                                } else if (response.body().getStatus() == 400) {
+//                                    Toast.makeText(InvoiceActivity.this, getResources().getString(R.string.no_invoice), Toast.LENGTH_SHORT).show();
+//
+//                                }
+//
+//                            }
+//
+//                        } else {
+//                            if (response.code() == 500) {
+//                                Toast.makeText(InvoiceActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Log.e("ERROR", response.message() + "");
+//
+//                                //     Toast.makeText(HomeActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//                            }
+//
+//
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<InvoiceDataModel> call, Throwable t) {
+//                        try {
+//                            dialog.dismiss();
+//                            if (t.getMessage() != null) {
+//                                Log.e("msg_category_error", t.getMessage() + "__");
+//
+//                                if (t.getMessage().toLowerCase().contains("failed to connect") || t.getMessage().toLowerCase().contains("unable to resolve host")) {
+//                                    // Toast.makeText(SubscriptionActivity.this, getString(R.string.something), Toast.LENGTH_SHORT).show();
+//                                } else {
+//                                    //Toast.makeText(SubscriptionActivity.this, getString(R.string.failed), Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        } catch (Exception e) {
+//                            Log.e("Error", e.getMessage() + "__");
+//                        }
+//                    }
+//                });
+//    }
+
+    private void updateData(InvoiceDataModel body) {
+//        binding.setModel(body);
+//        if (body.getLims_product_sale_data() != null && body.getLims_product_sale_data().size() > 0) {
+//            limsProductSaleDataList.addAll(body.getLims_product_sale_data());
+//            productBillAdapter.notifyDataSetChanged();
+//            Log.e("dkdkdk", limsProductSaleDataList.size() + "");
+////      if(limsProductSaleDataList.size()>3){
+////          LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 100);
+////          lp.weight = 1;
+////          binding.fl.setLayoutParams(lp);
+////
+////      }
+//        }
 
     }
 

@@ -4,12 +4,15 @@ import static androidx.room.ForeignKey.CASCADE;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.oliva2.tags.Tags;
 
 import java.io.Serializable;
 import java.util.List;
+
 @Entity(tableName = Tags.table_order_products,
         foreignKeys = {
                 @ForeignKey(entity = CreateOrderModel.class, parentColumns = "localid", childColumns = "create_id", onDelete = CASCADE)
@@ -28,14 +31,15 @@ public class ItemCartModel implements Serializable {
     private String sale_unit;
     private double net_unit_price;
     private double discount;
-    //private List<Integer> products_id;
+    private String products_id;
     private double tax_rate;
     private double tax;
     private double subtotal;
     private String name;
     private byte[] image;
     private int stock;
-
+    private int category_id;
+    private String category_ids;
 
     public String getProduct_code() {
         return product_code;
@@ -93,13 +97,13 @@ public class ItemCartModel implements Serializable {
         this.discount = discount;
     }
 
-//    public List<Integer> getProducts_id() {
-//        return products_id;
-//    }
-//
-//    public void setProducts_id(List<Integer> products_id) {
-//        this.products_id = products_id;
-//    }
+    public String getProducts_id() {
+        return products_id;
+    }
+
+    public void setProducts_id(String products_id) {
+        this.products_id = products_id;
+    }
 
     public double getTax_rate() {
         return tax_rate;
@@ -163,5 +167,21 @@ public class ItemCartModel implements Serializable {
 
     public void setLocalid(int localid) {
         this.localid = localid;
+    }
+
+    public int getCategory_id() {
+        return category_id;
+    }
+
+    public void setCategory_id(int category_id) {
+        this.category_id = category_id;
+    }
+
+    public String getCategory_ids() {
+        return category_ids;
+    }
+
+    public void setCategory_ids(String category_ids) {
+        this.category_ids = category_ids;
     }
 }

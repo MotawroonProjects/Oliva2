@@ -5,13 +5,14 @@ import static androidx.room.ForeignKey.CASCADE;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import com.oliva2.tags.Tags;
 
 import java.io.Serializable;
 
-@Entity(tableName = Tags.table_customer,
+@Entity(tableName = Tags.table_customer, indices = @Index(value = {"id", "customer_group_id"}, unique = true),
         foreignKeys = {
                 @ForeignKey(entity = CustomerGroupModel.class, parentColumns = "id", childColumns = "customer_group_id", onDelete = CASCADE)
 
@@ -51,6 +52,7 @@ public class CustomerModel implements Serializable {
     private String created_at;
     @Ignore
     private String updated_at;
+    private String type;
 
     public CustomerModel() {
     }
@@ -194,5 +196,13 @@ public class CustomerModel implements Serializable {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

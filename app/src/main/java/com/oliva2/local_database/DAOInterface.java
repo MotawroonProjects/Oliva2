@@ -109,4 +109,13 @@ public interface DAOInterface {
     List<CreateOrderModel> getallOrders();
     @Query("SELECT * FROM " + Tags.table_order_products + " where create_id=:id   ")
     List<ItemCartModel> getOrderProducts(String id);
+    @Insert(entity = CustomerModel.class, onConflict = OnConflictStrategy.IGNORE)
+    long insertcustomer(CustomerModel customerModel);
+    @Query("SELECT * FROM " + Tags.table_customer +" where type=:type")
+    List<CustomerModel> getCustomer(String type);
+    @Query("Update " + Tags.table_first_stock + " set qty =qty+:qty where product_id=:id")
+    int addtoProductFirstStock(int id, double qty);
+
+    @Query("Update " + Tags.table_products + " set count =:qty,can_make=can_make+:can_make  where id=:id")
+    int addtoProduct(int id, double qty, int can_make);
 }

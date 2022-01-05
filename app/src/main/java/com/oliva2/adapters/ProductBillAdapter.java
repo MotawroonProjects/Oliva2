@@ -12,18 +12,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.oliva2.R;
 import com.oliva2.databinding.ProductBillRowBinding;
 import com.oliva2.models.InvoiceDataModel;
+import com.oliva2.models.ItemCartModel;
 
 import java.util.List;
 
 public class ProductBillAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<InvoiceDataModel.LimsProductSaleData> list;
+    private List<ItemCartModel> list;
     private Context context;
     private LayoutInflater inflater;
     private int pos = -1;
 
     //private Fragment_Main fragment_main;
-    public ProductBillAdapter(List<InvoiceDataModel.LimsProductSaleData> list, Context context) {
+    public ProductBillAdapter(List<ItemCartModel> list, Context context) {
         this.list = list;
         this.context = context;
         inflater = LayoutInflater.from(context);
@@ -48,9 +49,9 @@ public class ProductBillAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         MyHolder myHolder = (MyHolder) holder;
         myHolder.binding.setModel(list.get(position));
-if(position==list.size()-1){
-    myHolder.binding.view.setVisibility(View.GONE);
-}
+//if(position==list.size()-1){
+//    myHolder.binding.view.setVisibility(View.GONE);
+//}
     }
 
     @Override

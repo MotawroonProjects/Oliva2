@@ -8,11 +8,12 @@
         <variable
             name="lang"
             type="String" />
-        <import type="java.util.Locale"/>
+
+        <import type="java.util.Locale" />
 
         <variable
             name="model"
-            type="com.oliva2.models.InvoiceDataModel" />
+            type="com.oliva2.models.CreateOrderModel" />
 
 
     </data>
@@ -62,16 +63,17 @@
                     android:src="@drawable/logo"
 
                     />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
-                    android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="@{model.lims_warehouse_data.name}"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
@@ -102,7 +104,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
-                        android:text="@{model.lims_warehouse_data.address}"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -137,7 +138,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
-                        android:text="@{model.lims_warehouse_data.phone}"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -182,8 +182,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-                        android:text="@{model.lims_sale_data.created_at}"
+                        android:text="@{model.date}"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -212,7 +211,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
-                        android:text="@{model.lims_sale_data.reference_no}"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -240,11 +238,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-                        android:text="@{model.lims_customer_data.name}"
+                        android:text="@{model.clientname}"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
@@ -268,11 +266,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-                        android:text="@{model.lims_customer_data.address}"
+                        android:text="@{model.address}"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
@@ -296,8 +294,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-                        android:text="@{model.lims_customer_data.phone_number}"
+                        android:text="@{model.phone}"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -306,57 +303,58 @@
                     android:id="@+id/fl"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_weight="1"
                     android:background="@drawable/rounded_strock_gap"
                     android:padding="10dp">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="@string/name2"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/amount"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/price2"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:text="@string/name2"
+                                android:textColor="@color/black"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/amount"
+                                android:textColor="@color/black"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="@string/price2"
+                                android:textColor="@color/black"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
 
-</LinearLayout>
+                    </LinearLayout>
 
                 </FrameLayout>
 
@@ -383,7 +381,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:text='@{String.format(Locale.ENGLISH,"%.2f",(model.lims_sale_data.total_price-model.lims_sale_data.total_tax))+""}'
+                        android:text='@{String.format(Locale.ENGLISH,"%.2f",model.total_price)+""}'
                         android:textColor="@color/black"
                         android:textSize="18sp"
 
@@ -420,7 +418,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:text='@{String.format(Locale.ENGLISH,"%.2f",model.lims_sale_data.total_tax)+""}'
+                        android:text='@{String.format(Locale.ENGLISH,"%.2f",(double)(((double)15.0*model.total_price)/(double)100.0))+""}'
                         android:textColor="@color/black"
                         android:textSize="18sp"
 
@@ -458,7 +456,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:text='@{String.format(Locale.ENGLISH,"%.2f",model.lims_sale_data.grand_total)+""}'
+                        android:text='@{String.format(Locale.ENGLISH,"%.2f",(double)(model.total_price+(((double)15.0*model.total_price)/(double)100.0)))+""}'
                         android:textColor="@color/black"
                         android:textSize="18sp"
 

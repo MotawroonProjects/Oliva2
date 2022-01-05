@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.List;
 
-@Entity(tableName = Tags.table_products
+@Entity(tableName = Tags.table_products,indices = @Index(value = {"id"}, unique = true)
 //        foreignKeys = {
 //                @ForeignKey(entity = CategoryModel.class, parentColumns = "id", childColumns = "category_id", onDelete = CASCADE)
 //
@@ -182,7 +182,7 @@ public class ProductModel implements Serializable {
         return offer_products;
     }
 
-    @Entity(tableName = Tags.table_first_stock,
+    @Entity(tableName = Tags.table_first_stock,indices = @Index(value = {"product_id","id","localid"}, unique = true),
             foreignKeys = {
                     @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
 
@@ -229,7 +229,7 @@ public class ProductModel implements Serializable {
         }
     }
 
-    @Entity(tableName = Tags.table_tax,
+    @Entity(tableName = Tags.table_tax,indices = @Index(value = {"product_id","id","localid"}, unique = true),
             foreignKeys = {
                     @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
 
@@ -287,7 +287,7 @@ public class ProductModel implements Serializable {
         }
     }
 
-    @Entity(tableName = Tags.table_unit,
+    @Entity(tableName = Tags.table_unit, indices = @Index(value = {"product_id","id","localid"}, unique = true),
             foreignKeys = {
                     @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "product_id", onDelete = CASCADE)
 
@@ -334,7 +334,7 @@ public class ProductModel implements Serializable {
         }
     }
 
-    @Entity(tableName = Tags.table_offer, indices = @Index(value = {"product_id","offer_id"}, unique = true),
+    @Entity(tableName = Tags.table_offer, indices = @Index(value = {"product_id","offer_id","localid"}, unique = true),
             foreignKeys = {
                     @ForeignKey(entity = ProductModel.class, parentColumns = "id", childColumns = "offer_id", onDelete = CASCADE)
 

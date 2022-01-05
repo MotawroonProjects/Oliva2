@@ -92,4 +92,6 @@
     <string name="gift_card_payment">Gift Card Payment</string>
     <string name="deposite_payment">Deposite Payment</string>
     <string name="closing">Closing</string>
+    <string name="tax1">Tax</string>
+
 </resources>
