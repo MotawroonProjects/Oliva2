@@ -312,7 +312,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="500dp"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -351,7 +351,7 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="200dp" />
 
 
                     </LinearLayout>
@@ -381,7 +381,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:text='@{String.format(Locale.ENGLISH,"%.2f",model.total_price)+""}'
+                        android:text='@{String.format(Locale.ENGLISH,"%.2f",(model.total_price-model.total_tax))+""}'
                         android:textColor="@color/black"
                         android:textSize="18sp"
 
@@ -418,7 +418,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:text='@{String.format(Locale.ENGLISH,"%.2f",(double)(((double)15.0*model.total_price)/(double)100.0))+""}'
+                        android:text='@{String.format(Locale.ENGLISH,"%.2f",model.total_tax)+""}'
                         android:textColor="@color/black"
                         android:textSize="18sp"
 
@@ -456,7 +456,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="3dp"
-                        android:text='@{String.format(Locale.ENGLISH,"%.2f",(double)(model.total_price+(((double)15.0*model.total_price)/(double)100.0)))+""}'
+                        android:text='@{String.format(Locale.ENGLISH,"%.2f",model.total_price)+""}'
                         android:textColor="@color/black"
                         android:textSize="18sp"
 
