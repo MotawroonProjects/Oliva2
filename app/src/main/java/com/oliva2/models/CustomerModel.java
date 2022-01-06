@@ -23,18 +23,17 @@ public class CustomerModel implements Serializable {
     @PrimaryKey
     private int id;
     private int customer_group_id;
-    @Ignore
+
     private int user_id;
     private String name;
     @Ignore
     private String company_name;
-    @Ignore
     private String email;
     private String phone_number;
     @Ignore
     private String tax_no;
     private String address;
-    @Ignore
+
     private String city;
     @Ignore
     private String state;

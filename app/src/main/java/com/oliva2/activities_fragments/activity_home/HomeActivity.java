@@ -737,7 +737,8 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     }
 
     private void insertproduct() {
-        Log.e("kskkskks", productinsert + "");
+       // Log.e("kskkskks", productinsert + "");
+        if(productinsert<productModelList1.size()){
         ProductModel productModel = productModelList1.get(productinsert);
         if (productModel.getImage() != null) {
             setImageBitmap(Tags.Product_IMAGE_URL + productModel.getImage(), productModel, productinsert);
@@ -746,7 +747,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
             accessDatabase.insertRetrieve(productModel, HomeActivity.this);
 
 
-        }
+        }}
     }
 
 
@@ -1853,7 +1854,7 @@ Log.e("ssss","ssssss");
             } else {
 
                 getall = true;
-                accessDatabase.getProduct(HomeActivity.this, id, searchtype, 10, 1);
+                accessDatabase.getProduct(HomeActivity.this, id, searchtype, 10, 0);
                 //accessDatabase.getProduct(this, "1", "featured", 10, 0);
                 layoutpos = 0;
             }
@@ -2296,10 +2297,10 @@ Log.e("ssss","ssssss");
 
     private void addcustomer(CustomerModel customerModel) {
 
-        //Log.e("dlldldldl",customerModel.getId()+"");
 //        ProgressDialog dialog = Common.createProgressDialog(this, getString(R.string.wait));
 //        dialog.setCancelable(false);
 //        dialog.show();
+
         Api.getService(Tags.base_url)
                 .addCustomer(customerModel.getCustomer_group_id() + "", userModel.getUser().getId() + "", customerModel.getName(), customerModel.getEmail(), customerModel.getPhone_number(), customerModel.getAddress(), customerModel.getCity(), customerModel.getId() + "")
                 .enqueue(new Callback<SingleCustomerDataModel>() {
@@ -2366,8 +2367,8 @@ Log.e("ssss","ssssss");
     @Override
     public void onCustomerDataSuccess(List<CustomerModel> customerModelList) {
         this.customerModelList = customerModelList;
-        if (customerModelList.size() > 0) {
-            addcustomer(customerModelList.get(orderpos));
+        if (this.customerModelList.size() > 0) {
+            addcustomer(this.customerModelList.get(orderpos));
 
         } else {
             getdata();

@@ -1,15 +1,16 @@
 plugins {
     id 'com.android.application'
 }
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.oliva2"
-        minSdkVersion 17
-        targetSdkVersion 30
+        minSdkVersion 19
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -79,7 +80,12 @@ dependencies {
     implementation "androidx.room:room-runtime:2.3.0"
     annotationProcessor "androidx.room:room-compiler:2.3.0"
     implementation 'com.github.bumptech.glide:glide:4.10.0'
-
-
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation('com.journeyapps:zxing-android-embedded:4.3.0') { transitive = false }
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
 
 }

@@ -26,6 +26,7 @@ public class UserModel extends StatusResponse{
         private int pos_id;
         private String created_at;
         private String updated_at;
+        private Warehouse warehouse;
 
         public int getId() {
             return id;
@@ -81,6 +82,58 @@ public class UserModel extends StatusResponse{
 
         public String getUpdated_at() {
             return updated_at;
+        }
+
+        public Warehouse getWarehouse() {
+            return warehouse;
+        }
+
+        public class Warehouse implements Serializable{
+            private int id;
+            private int branch_id;
+            private String name;
+            private String phone;
+            private String email;
+            private String address;
+            private int is_active;
+            private String created_at;
+            private String updated_at;
+
+            public int getId() {
+                return id;
+            }
+
+            public int getBranch_id() {
+                return branch_id;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public String getPhone() {
+                return phone;
+            }
+
+            public String getEmail() {
+                return email;
+            }
+
+            public String getAddress() {
+                return address;
+            }
+
+            public int getIs_active() {
+                return is_active;
+            }
+
+            public String getCreated_at() {
+                return created_at;
+            }
+
+            public String getUpdated_at() {
+                return updated_at;
+            }
         }
     }
 

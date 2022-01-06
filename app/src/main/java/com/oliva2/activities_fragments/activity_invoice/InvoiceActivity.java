@@ -35,13 +35,18 @@ import com.google.android.exoplayer2.util.Log;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.oliva2.R;
+import com.oliva2.adapters.PdfGenerator;
+import com.oliva2.adapters.PdfGeneratorListener;
 import com.oliva2.adapters.ProductBillAdapter;
+import com.oliva2.adapters.ZatcaQRCodeGeneration;
 import com.oliva2.databinding.ActivityInvoiceBinding;
 import com.oliva2.language.Language;
 import com.oliva2.models.CreateOrderModel;
+import com.oliva2.models.FailureResponse;
 import com.oliva2.models.InvoiceDataModel;
 import com.oliva2.models.ItemCartModel;
 import com.oliva2.models.PdfDocumentAdpter;
+import com.oliva2.models.SuccessResponse;
 import com.oliva2.models.UserModel;
 import com.oliva2.preferences.Preferences;
 import com.oliva2.remote.Api;
@@ -52,16 +57,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.KITKAT;
 
 public class InvoiceActivity extends AppCompatActivity {
@@ -74,6 +83,7 @@ public class InvoiceActivity extends AppCompatActivity {
     private ProductBillAdapter productBillAdapter;
     private final String write_perm = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private final int write_req = 100;
+
     //    private final String bluthoos_perm = Manifest.permission.BLUETOOTH;
 //    private final String bluthoosadmin_perm = Manifest.permission.BLUETOOTH_ADMIN;
 //
@@ -82,6 +92,8 @@ public class InvoiceActivity extends AppCompatActivity {
     private boolean isPermissionGranted = false;
     private Image image;
     private Context context;
+    private SimpleDateFormat dateFormat2;
+    private SimpleDateFormat dateFormat;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -114,7 +126,7 @@ public class InvoiceActivity extends AppCompatActivity {
 
 
         } else {
-            takeScreenshot(2);
+            printpdf();
             isPermissionGranted = true;
 
         }
@@ -125,7 +137,7 @@ public class InvoiceActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == write_req && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            takeScreenshot(2);
+            printpdf();
         }
     }
 
@@ -141,7 +153,7 @@ public class InvoiceActivity extends AppCompatActivity {
         binding.recView.setNestedScrollingEnabled(false);
         binding.recView.setLayoutManager(new LinearLayoutManager(this));
         binding.recView.setAdapter(productBillAdapter);
-       // getlastInvoice();
+        // getlastInvoice();
         binding.btnConfirm3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,11 +164,31 @@ public class InvoiceActivity extends AppCompatActivity {
     }
 
     private void updateData() {
+        dateFormat2 = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.ENGLISH);
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+
+        ZatcaQRCodeGeneration.Builder builder = new ZatcaQRCodeGeneration.Builder();
+        builder.sellerName(userModel.getUser().getWarehouse().getName()) // Shawrma House
+                .taxNumber("300942208200003") // 1234567890
+                .invoiceDate(createOrderModel.getDate()) //..> 22/11/2021 03:00 am
+                .totalAmount(createOrderModel.getTotal_price() + "") // 100
+                .taxAmount(createOrderModel.getTotal_tax() + "");
         binding.setModel(createOrderModel);
+        binding.setUsermodel(userModel.getUser().getWarehouse());
+
+        binding.setImage(builder.getBase64());
+        try {
+
+            String pos = "posr-" + (dateFormat.format(Objects.requireNonNull(dateFormat2.parse(createOrderModel.getDate()))).replace("-","").replace(":","").replace(" ","-"));
+            binding.setPos(pos);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         if (createOrderModel.getDetails() != null && createOrderModel.getDetails().size() > 0) {
             limsProductSaleDataList.addAll(createOrderModel.getDetails());
             productBillAdapter.notifyDataSetChanged();
             Log.e("dkdkdk", limsProductSaleDataList.size() + "");
+
 //      if(limsProductSaleDataList.size()>3){
 //          LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 100);
 //          lp.weight = 1;
@@ -491,14 +523,71 @@ public class InvoiceActivity extends AppCompatActivity {
 
         PrintManager printManager = (PrintManager) context.getSystemService(Context.PRINT_SERVICE);
         try {
-            String FILE;
+            String file;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-                FILE = getExternalFilesDir(Environment.DIRECTORY_DCIM) + "/FirstPdf.pdf";
+                file = getExternalFilesDir(Environment.DIRECTORY_DCIM) + "/";
             } else {
-                FILE = Environment.getExternalStorageDirectory().toString() + "/FirstPdf.pdf";
+                file = Environment.getExternalStorageDirectory().toString() + "/";
             }
-            PrintDocumentAdapter printDocumentAdapter = new PdfDocumentAdpter(context, FILE);
-            printManager.print("Document", printDocumentAdapter, new PrintAttributes.Builder().build());
+
+            PdfGenerator.getBuilder()
+                    .setContext(this)
+                    .fromViewSource()
+                    .fromView(binding.getRoot().findViewById(R.id.scrollView))
+                    /* "fromLayoutXML()" takes array of layout resources.
+                     * You can also invoke "fromLayoutXMLList()" method here which takes list of layout resources instead of array. */
+                    //.setPageSize(PdfGenerator.PageSize.A4)
+                    /* It takes default page size like A4,A5. You can also set custom page size in pixel
+                     * by calling ".setCustomPageSize(int widthInPX, int heightInPX)" here. */
+                    .setFileName("FirstPdf")
+                    .setFolderName(file)
+                    /* It is folder name. If you set the folder name like this pattern (FolderA/FolderB/FolderC), then
+                     * FolderA creates first.Then FolderB inside FolderB and also FolderC inside the FolderB and finally
+                     * the pdf file named "Test-PDF.pdf" will be store inside the FolderB. */
+                    .openPDFafterGeneration(true)
+                    /* It true then the generated pdf will be shown after generated. */
+                    .build(new PdfGeneratorListener() {
+                        @Override
+                        public void onFailure(FailureResponse failureResponse) {
+                            super.onFailure(failureResponse);
+                            Log.d(TAG, "onFailure: " + failureResponse.getErrorMessage());
+                            /* If pdf is not generated by an error then you will findout the reason behind it
+                             * from this FailureResponse. */
+                            //Toast.makeText(MainActivity.this, "Failure : "+failureResponse.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(getContext(), "" + failureResponse.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void showLog(String log) {
+                            super.showLog(log);
+                            Log.d(TAG, "log: " + log);
+                            /*It shows logs of events inside the pdf generation process*/
+                        }
+
+                        @Override
+                        public void onStartPDFGeneration() {
+
+                        }
+
+                        @Override
+                        public void onFinishPDFGeneration() {
+
+                        }
+
+                        @Override
+                        public void onSuccess(SuccessResponse response) {
+                            super.onSuccess(response);
+                            /* If PDF is generated successfully then you will find SuccessResponse
+                             * which holds the PdfDocument,File and path (where generated pdf is stored)*/
+                            //Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                            // Log.d(TAG, "Success: " + response.getPath());
+                            String file1 = response.getPath();
+                            PrintDocumentAdapter printDocumentAdapter = new PdfDocumentAdpter(context, file1);
+
+                            printManager.print("Document", printDocumentAdapter, new PrintAttributes.Builder().build());
+                        }
+                    });
+
         } catch (Exception e) {
             android.util.Log.e("sssssss", e.getMessage());
         }
