@@ -75,6 +75,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
     private ProgressDialog dialog;
     private int pos;
     private List<Integer> categoryindex;
+    private SimpleDateFormat dateFormat2;
 //    private ActivityResultLauncher<Intent> launcher;
 //    private SelectedLocation selectedLocation;
 
@@ -93,7 +94,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
 
     private void initView() {
-        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.ENGLISH);
+         dateFormat2 = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.ENGLISH);
 
         categoryindex = new ArrayList<>();
         categoryindex.add(2);
@@ -290,7 +291,6 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
                 createOrderModel.setReference_no(binding.editInvoicenum.getText().toString());
                 createOrderModel.setSale_status("3");
                 createOrderModel.setPaid_by_id("3");
-                createOrderModel.setDate(dateFormat2.format(new Date(System.currentTimeMillis())));
                 if (!createOrderModel.getCustomer_id().equals("0")) {
                     createOrder();
                 } else {
@@ -531,6 +531,8 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
     public void createOrder() {
 //        try {
+        createOrderModel.setDate(dateFormat2.format(new Date(System.currentTimeMillis())));
+
         pos = 0;
         dialog.show();
         accessDatabase.insertOrder(createOrderModel, CartActivity.this);
@@ -853,12 +855,13 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
                 accessDatabase.udateproductCount(list.get(pos), this);
             } else {
                 preferences.clearcart_oliva(CartActivity.this);
-                this.createOrderModel = preferences.getcart_olivaData(CartActivity.this);
-                updateUi();
+
+                Intent intent = new Intent(CartActivity.this, InvoiceActivity.class);
+                intent.putExtra("data", createOrderModel);
+                startActivity(intent);
+                finish();
             }
-            Intent intent = new Intent(CartActivity.this, InvoiceActivity.class);
-            intent.putExtra("data", createOrderModel);
-            startActivity(intent);
+
         }
 
     }

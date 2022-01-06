@@ -107,7 +107,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     // private List<ProductDetialsModel> allproductDetialsModelList;
     private List<Integer> categoryindex;
     public int category_id;
-    private String searchtype="featured", id;
+    private String searchtype="featured", id="1";
     private int check = -1;
     private Bitmap bitmapimage;
     private int productinsert, categoryinsert = 0, brandinsert, taxinsert, unitinsert, firststockinsert, offerinsert;

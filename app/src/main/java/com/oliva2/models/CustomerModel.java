@@ -30,11 +30,9 @@ public class CustomerModel implements Serializable {
     private String company_name;
     @Ignore
     private String email;
-    @Ignore
     private String phone_number;
     @Ignore
     private String tax_no;
-    @Ignore
     private String address;
     @Ignore
     private String city;
