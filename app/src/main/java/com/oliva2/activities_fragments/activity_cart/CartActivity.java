@@ -94,7 +94,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
 
     private void initView() {
-         dateFormat2 = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.ENGLISH);
+        dateFormat2 = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.ENGLISH);
 
         categoryindex = new ArrayList<>();
         categoryindex.add(2);
@@ -310,7 +310,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
         });
 
         updateUi();
-        gettax();
+        // gettax();
         getCustomer();
     }
 
@@ -331,7 +331,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
             createOrderModel.setPayment_note(cashDataModel.getPayment_note());
             createOrderModel.setSale_note(cashDataModel.getSale_note());
             closeSheet4();
-            createOrderModel.setSale_status("1");
+            // createOrderModel.setSale_status("1");
             if (!createOrderModel.getCustomer_id().equals("0")) {
                 createOrder();
             } else {
@@ -432,7 +432,7 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
 
 
     public void openSheet() {
-
+        gettax();
         //binding.btnAddBid.setAlpha(.4f);
         binding.expandLayout.setExpanded(true, true);
     }

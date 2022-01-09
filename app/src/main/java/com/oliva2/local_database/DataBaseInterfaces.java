@@ -121,4 +121,7 @@ public class DataBaseInterfaces {
     public interface CustmomerInsertInterface {
         void onCustmomerInsertedSuccess(long bol);
     }
+    public interface LastOrderInterface {
+        void onLastOrderDataSuccess(CreateOrderModel createOrderModels);
+    }
 }

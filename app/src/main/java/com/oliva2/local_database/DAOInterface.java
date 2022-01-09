@@ -118,4 +118,7 @@ public interface DAOInterface {
 
     @Query("Update " + Tags.table_products + " set count =:qty,can_make=can_make+:can_make  where id=:id")
     int addtoProduct(int id, double qty, int can_make);
+    @Query("SELECT * FROM " + Tags.table_order +" where localid=(SELECT MAX(localid) from orders)")
+    CreateOrderModel getlastOrder();
+
 }

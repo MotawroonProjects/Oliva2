@@ -85,7 +85,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface, DataBaseInterfaces.UnitInterface, DataBaseInterfaces.ProductOffersInterface, DataBaseInterfaces.FristStockupdateInterface, DataBaseInterfaces.ProductupdateInterface, DataBaseInterfaces.AllProductInterface, DataBaseInterfaces.CustomerGroupInsertInterface, DataBaseInterfaces.MainTaxInsertInterface, DataBaseInterfaces.CustomerInsertInterface, DataBaseInterfaces.AllOrderInterface, DataBaseInterfaces.AllOrderProductInterface, DataBaseInterfaces.CustomerInterface {
+public class HomeActivity extends AppCompatActivity implements DataBaseInterfaces.RetrieveInsertInterface, DataBaseInterfaces.CategoryInsertInterface, DataBaseInterfaces.CategoryInterface, DataBaseInterfaces.ProductInterface, DataBaseInterfaces.FirstStockInsertInterface, DataBaseInterfaces.TaxInsertInterface, DataBaseInterfaces.UnitInsertInterface, DataBaseInterfaces.OfferInsertInterface, DataBaseInterfaces.BrandInsertInterface, DataBaseInterfaces.BrandInterface, DataBaseInterfaces.TaxInterface, DataBaseInterfaces.FirstStockInterface, DataBaseInterfaces.UnitInterface, DataBaseInterfaces.ProductOffersInterface, DataBaseInterfaces.FristStockupdateInterface, DataBaseInterfaces.ProductupdateInterface, DataBaseInterfaces.AllProductInterface, DataBaseInterfaces.CustomerGroupInsertInterface, DataBaseInterfaces.MainTaxInsertInterface, DataBaseInterfaces.CustomerInsertInterface, DataBaseInterfaces.AllOrderInterface, DataBaseInterfaces.AllOrderProductInterface, DataBaseInterfaces.CustomerInterface, DataBaseInterfaces.LastOrderInterface {
     private ActivityHomeBinding binding;
     private Preferences preferences;
     private UserModel userModel;
@@ -107,7 +107,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     // private List<ProductDetialsModel> allproductDetialsModelList;
     private List<Integer> categoryindex;
     public int category_id;
-    private String searchtype="featured", id="1";
+    private String searchtype = "featured", id = "1";
     private int check = -1;
     private Bitmap bitmapimage;
     private int productinsert, categoryinsert = 0, brandinsert, taxinsert, unitinsert, firststockinsert, offerinsert;
@@ -121,6 +121,8 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
 
     private List<String> productids;
     private List<String> categoryids;
+    private String type;
+    private CreateOrderModel createOrderModel;
 
     protected void attachBaseContext(Context newBase) {
         Paper.init(newBase);
@@ -204,13 +206,13 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
             //checkAvialbilty();
             productModelList.clear();
             productAdapter.notifyDataSetChanged();
-            getall=false;
-            layoutpos=0;
-            layoutpos2=0;
+            getall = false;
+            layoutpos = 0;
+            layoutpos2 = 0;
             productModelList.clear();
             allproduct.clear();
             accessDatabase.getallProduct(this);
-         //   accessDatabase.getProduct(HomeActivity.this, id, searchtype, 10, 1);
+            //   accessDatabase.getProduct(HomeActivity.this, id, searchtype, 10, 1);
 
         });
         binding.llCart.setOnClickListener(new View.OnClickListener() {
@@ -238,9 +240,9 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
             public void onClick(View v) {
                 binding.drawar.closeDrawer(GravityCompat.START);
 
-                Intent intent = new Intent(HomeActivity.this, InvoiceActivity.class);
-                intent.putExtra("data", "0");
-                startActivity(intent);
+                type = "last";
+                accessDatabase.getlastOrder(HomeActivity.this);
+
 //                getlastInvoice();
 //                Intent intent = new Intent(HomeActivity.this, InvoiceActivity.class);
 //                startActivity(intent);
@@ -303,10 +305,11 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
                 progressDialog.show();
 
                 accessDatabase.getallOrder(HomeActivity.this);
-
+                type = "all";
 
             }
         });
+
         // binding.recviewCategory.setNestedScrollingEnabled(true);
 //        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 //        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
@@ -329,9 +332,9 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.e("llll", dy + " " + dx);
+                //Log.e("llll", dy + " " + dx);
                 if (dy > 0) {
-                    Log.e(";lllll", "lkllkkkk");
+                  //  Log.e(";lllll", "lkllkkkk");
                     int threshold = 20;
                     int count = productAdapter.getItemCount();
                     LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
@@ -505,7 +508,8 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     private void insertcategory() {
         CategoryModel categoryModel = categoryModelList.get(categoryinsert);
         if (categoryModel.getImage() != null) {
-            Log.e("lldldl", ";ss;;s;s;s" + categoryinsert + " " + categoryModelList.size());
+           //
+            // Log.e("lldldl", ";ss;;s;s;s" + categoryinsert + " " + categoryModelList.size());
 
             setImageBitmap(Tags.Category_IMAGE_URL + categoryModel.getImage(), categoryModel, categoryinsert);
         } else {
@@ -613,7 +617,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     }
 
     private void updateData(BrandDataModel body) {
-        Log.e("fkkfkfk", body.getData().size() + "");
+      //  Log.e("fkkfkfk", body.getData().size() + "");
         brandModelList.clear();
         brandModelList.addAll(body.getData());
         insertbrand();
@@ -633,7 +637,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     @SuppressLint("NotifyDataSetChanged")
     public void getProdusts(String brand_id, String cat_id, String isfeatured) {
         // progressDialog.show();
-        Log.e("kdkdkkd", userModel.getUser().getId() + "");
+       // Log.e("kdkdkkd", userModel.getUser().getId() + "");
         productModelList.clear();
         productAdapter.notifyDataSetChanged();
         binding.progBar.setVisibility(View.VISIBLE);
@@ -737,17 +741,18 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     }
 
     private void insertproduct() {
-       // Log.e("kskkskks", productinsert + "");
-        if(productinsert<productModelList1.size()){
-        ProductModel productModel = productModelList1.get(productinsert);
-        if (productModel.getImage() != null) {
-            setImageBitmap(Tags.Product_IMAGE_URL + productModel.getImage(), productModel, productinsert);
-        } else {
+        // Log.e("kskkskks", productinsert + "");
+        if (productinsert < productModelList1.size()) {
+            ProductModel productModel = productModelList1.get(productinsert);
+            if (productModel.getImage() != null) {
+                setImageBitmap(Tags.Product_IMAGE_URL + productModel.getImage(), productModel, productinsert);
+            } else {
 
-            accessDatabase.insertRetrieve(productModel, HomeActivity.this);
+                accessDatabase.insertRetrieve(productModel, HomeActivity.this);
 
 
-        }}
+            }
+        }
     }
 
 
@@ -759,7 +764,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         id = s;
         productModelList.clear();
 
-        accessDatabase.getProduct(HomeActivity.this, s, "brand_id", 10, 1);
+        accessDatabase.getProduct(HomeActivity.this, s, "brand_id", 10, 0);
 
     }
 
@@ -771,7 +776,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         searchtype = "category_id";
         id = s;
 
-        accessDatabase.getProduct(HomeActivity.this, s, "category_id", 10, 1);
+        accessDatabase.getProduct(HomeActivity.this, s, "category_id", 10, 0);
 
 
     }
@@ -1029,7 +1034,7 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
         }
 
         if (!categoryindex.contains(productModel.getCategory_id())) {
-Log.e("ssss","ssssss");
+           // Log.e("ssss", "ssssss");
             if (productModel.getFirst_stock() != null && productModel.getFirst_stock().getQty() > 0) {
                 if (pos == -1) {
                     ItemCartModel productDetails = new ItemCartModel();
@@ -1163,7 +1168,7 @@ Log.e("ssss","ssssss");
                     int can = 0;
                     for (int i = 0; i < productModel.getOffer_products().size(); i++) {
                         for (int j = 0; j < allproduct.size(); j++) {
-                            Log.e("sss", allproduct.get(j).getId() + " " + productModel.getOffer_products().get(i).getProduct_id());
+                      //      Log.e("sss", allproduct.get(j).getId() + " " + productModel.getOffer_products().get(i).getProduct_id());
                             if (allproduct.get(j).getId() == productModel.getOffer_products().get(i).getProduct_id()) {
                                 productModels.add(allproduct.get(j));
                                 productids.add(allproduct.get(j).getId() + "");
@@ -1200,7 +1205,7 @@ Log.e("ssss","ssssss");
                                 }
                             }
                         }
-                        Log.e("s;;s;", can + "");
+                      //  Log.e("s;;s;", can + "");
                         if (can != -1) {
                             if (pos == -1) {
                                 ItemCartModel productDetails = new ItemCartModel();
@@ -1291,7 +1296,7 @@ Log.e("ssss","ssssss");
 
     @Override
     public void onRetrieveDataSuccess(long bol) {
-        Log.e("productindex", productinsert + "" + bol);
+        //Log.e("productindex", productinsert + "" + bol);
         if (bol > 0) {
             productinsert += 1;
             if (productinsert < productModelList1.size()) {
@@ -1334,7 +1339,7 @@ Log.e("ssss","ssssss");
     }
 
     private void inserttax() {
-        Log.e("taxinsert", taxinsert + "");
+      //  Log.e("taxinsert", taxinsert + "");
         if (productModelList1.get(taxinsert).getTax() != null) {
             productModelList1.get(taxinsert).getTax().setProduct_id(productModelList1.get(taxinsert).getId());
             accessDatabase.insertTax(productModelList1.get(taxinsert).getTax(), this);
@@ -1353,7 +1358,7 @@ Log.e("ssss","ssssss");
     }
 
     private void insertunit() {
-        Log.e("unit", unitinsert + "");
+        //Log.e("unit", unitinsert + "");
 
         if (productModelList1.get(unitinsert).getUnit() != null) {
             productModelList1.get(unitinsert).getUnit().setProduct_id(productModelList1.get(unitinsert).getId());
@@ -1373,14 +1378,14 @@ Log.e("ssss","ssssss");
     }
 
     private void insertfirststock() {
-        Log.e("first", firststockinsert + "");
+      //  Log.e("first", firststockinsert + "");
         if (productModelList1.get(firststockinsert).getFirst_stock() != null) {
             accessDatabase.insertFirst(productModelList1.get(firststockinsert).getFirst_stock(), this);
         } else {
             firststockinsert += 1;
             if (firststockinsert < productModelList1.size()) {
                 // firststockboolean = false;
-                Log.e(";slslsl", offerinsert + " " + firststockinsert);
+        //        Log.e(";slslsl", offerinsert + " " + firststockinsert);
                 insertoffer();
             } else if (offerinsert < productModelList1.size()) {
                 insertoffer();
@@ -1392,9 +1397,9 @@ Log.e("ssss","ssssss");
     }
 
     private void insertoffer() {
-        Log.e("offerinsert", offerinsert + "");
+      //  Log.e("offerinsert", offerinsert + "");
         if (productModelList1.get(offerinsert).getOffer_products() != null && productModelList1.get(offerinsert).getOffer_products().size() > 0) {
-            Log.e("offferrs", productModelList1.get(offerinsert).getOffer_products().size() + "");
+        //    Log.e("offferrs", productModelList1.get(offerinsert).getOffer_products().size() + "");
             accessDatabase.insertOffer(productModelList1.get(offerinsert).getOffer_products(), this);
         } else {
             offerinsert += 1;
@@ -1414,7 +1419,7 @@ Log.e("ssss","ssssss");
 
     @Override
     public void onCategoryDataInsertedSuccess(long bol) {
-        Log.e("sssss", bol + " " + categoryinsert);
+       // Log.e("sssss", bol + " " + categoryinsert);
         if (bol > 0) {
             categoryinsert += 1;
 
@@ -1492,7 +1497,7 @@ Log.e("ssss","ssssss");
                             categoryModelList.set(pos1, categoryModel);
                         }
 //
-                        Log.e("dssss", pos1 + "");
+            //            Log.e("dssss", pos1 + "");
 
                         accessDatabase.insertCategory(categoryModel, HomeActivity.this);
                     }
@@ -1641,7 +1646,7 @@ Log.e("ssss","ssssss");
         HomeActivity.this.productModelList.addAll(productModelList);
         layoutpos = 0;
         if (productModelList.size() > 0) {
-            Log.e("llll",productModelList.get(layoutpos).getId()+"");
+           // Log.e("llll", productModelList.get(layoutpos).getId() + "");
             accessDatabase.getTax(HomeActivity.this, HomeActivity.this.productModelList.get(layoutpos).getId());
         }
 
@@ -1657,7 +1662,7 @@ Log.e("ssss","ssssss");
             firststockinsert += 1;
             if (firststockinsert < productModelList1.size()) {
                 // firststockboolean = false;
-                Log.e(";slslsl", offerinsert + " " + firststockinsert);
+               // Log.e(";slslsl", offerinsert + " " + firststockinsert);
                 insertoffer();
             } else if (offerinsert < productModelList1.size()) {
                 insertoffer();
@@ -1707,7 +1712,7 @@ Log.e("ssss","ssssss");
 
     @Override
     public void onOfferDataInsertedSuccess(boolean bol) {
-        Log.e("d;ldldl", bol + "" + productModelList1.size());
+      //  Log.e("d;ldldl", bol + "" + productModelList1.size());
         if (bol) {
             offerinsert += 1;
             if (offerinsert == productModelList1.size()) {
@@ -1732,7 +1737,7 @@ Log.e("ssss","ssssss");
         if (bol > 0) {
             brandinsert += 1;
         }
-        Log.e("dlldl", brandinsert + "");
+       // Log.e("dlldl", brandinsert + "");
         if (brandinsert == brandModelList.size()) {
             // brandisertboolean = false;
             accessDatabase.getBrand(this);
@@ -1793,15 +1798,15 @@ Log.e("ssss","ssssss");
     @Override
     public void onFirstStockDataSuccess(ProductModel.FirstStock firstStock) {
         if (firstStock != null) {
-            Log.e("lkkkk","lllll");
+         //   Log.e("lkkkk", "lllll");
             if (getall) {
-                Log.e("mmmmsssssss",productModelList.get(layoutpos).getId()+" "+firstStock.getId()+"");
+           //     Log.e("mmmmsssssss", productModelList.get(layoutpos).getId() + " " + firstStock.getId() + "");
 
                 ProductModel productModel = productModelList.get(layoutpos);
                 productModel.setFirst_stock(firstStock);
                 productModelList.set(layoutpos, productModel);
             } else {
-                Log.e("mmmmsssssss",allproduct.get(layoutpos2).getId()+" "+firstStock.getId()+"");
+             //   Log.e("mmmmsssssss", allproduct.get(layoutpos2).getId() + " " + firstStock.getId() + "");
 
                 ProductModel productModel = allproduct.get(layoutpos2);
                 productModel.setFirst_stock(firstStock);
@@ -1809,7 +1814,7 @@ Log.e("ssss","ssssss");
             }
         }
         if (getall) {
-            Log.e("llll",productModelList.get(layoutpos).getId()+"");
+         //   Log.e("llll", productModelList.get(layoutpos).getId() + "");
 
             accessDatabase.getUnit(HomeActivity.this, HomeActivity.this.productModelList.get(layoutpos).getId());
         } else {
@@ -1843,7 +1848,7 @@ Log.e("ssss","ssssss");
             }
         }
         if (getall) {
-            Log.e("llll",productModelList.get(layoutpos).getId()+"");
+          //  Log.e("llll", productModelList.get(layoutpos).getId() + "");
 
             accessDatabase.getOffersProduct(HomeActivity.this, HomeActivity.this.productModelList.get(layoutpos).getId() + "");
         } else {
@@ -1870,7 +1875,7 @@ Log.e("ssss","ssssss");
 
     @Override
     public void onProductOffersDataSuccess(List<ProductModel.OfferProducts> productModelList) {
-        Log.e("ddlkdkdk", productModelList.size() + "");
+       // Log.e("ddlkdkdk", productModelList.size() + "");
         if (productModelList != null) {
             ProductModel productModel = this.productModelList.get(layoutpos);
             productModel.setOffer_products(productModelList);
@@ -1878,7 +1883,7 @@ Log.e("ssss","ssssss");
         }
         layoutpos += 1;
         if (layoutpos < this.productModelList.size()) {
-          //  Log.e("llll",productModelList.get(layoutpos).getId()+"");
+            //  Log.e("llll",productModelList.get(layoutpos).getId()+"");
 
             accessDatabase.getTax(HomeActivity.this, HomeActivity.this.productModelList.get(layoutpos).getId());
 
@@ -2161,16 +2166,23 @@ Log.e("ssss","ssssss");
 
     @Override
     public void onAllOrderProductDataSuccess(List<ItemCartModel> itemCartModelList) {
-        CreateOrderModel createOrderModel = createOrderModels.get(orderpos);
-        createOrderModel.setDetails(itemCartModelList);
-        createOrderModels.set(orderpos, createOrderModel);
-        orderpos += 1;
-        if (orderpos == createOrderModels.size()) {
-            orderpos = 0;
-            uploadOrders();
-        } else {
-            accessDatabase.getOrderProduct(this, createOrderModels.get(orderpos).getLocalid() + "");
+        if (type.equals("all")) {
+            CreateOrderModel createOrderModel = createOrderModels.get(orderpos);
+            createOrderModel.setDetails(itemCartModelList);
+            createOrderModels.set(orderpos, createOrderModel);
+            orderpos += 1;
+            if (orderpos == createOrderModels.size()) {
+                orderpos = 0;
+                uploadOrders();
+            } else {
+                accessDatabase.getOrderProduct(this, createOrderModels.get(orderpos).getLocalid() + "");
 
+            }
+        } else {
+            createOrderModel.setDetails(itemCartModelList);
+            Intent intent = new Intent(HomeActivity.this, InvoiceActivity.class);
+            intent.putExtra("data", createOrderModel);
+            startActivity(intent);
         }
     }
 
@@ -2307,7 +2319,7 @@ Log.e("ssss","ssssss");
                     @Override
                     public void onResponse(Call<SingleCustomerDataModel> call, Response<SingleCustomerDataModel> response) {
                         //  dialog.dismiss();
-                        Log.e("ssssssssyyyyyy", response.body().getStatus() + "");
+                    //    Log.e("ssssssssyyyyyy", response.body().getStatus() + "");
                         if (response.isSuccessful()) {
                             if (response.body().getStatus() == 200) {
                                 orderpos += 1;
@@ -2372,6 +2384,14 @@ Log.e("ssss","ssssss");
 
         } else {
             getdata();
+        }
+    }
+
+    @Override
+    public void onLastOrderDataSuccess(CreateOrderModel createOrderModels) {
+        if (createOrderModels != null) {
+            this.createOrderModel = createOrderModels;
+            accessDatabase.getOrderProduct(this, createOrderModels.getLocalid() + "");
         }
     }
 }

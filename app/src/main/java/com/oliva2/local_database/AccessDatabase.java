@@ -132,6 +132,9 @@ public class AccessDatabase {
     public void getallOrder(DataBaseInterfaces.AllOrderInterface productInterface) {
         new AllOrderTask(productInterface).execute();
     }
+    public void getlastOrder(DataBaseInterfaces.LastOrderInterface productInterface) {
+        new LastOrderTask(productInterface).execute();
+    }
     public void getOrderProduct(DataBaseInterfaces.AllOrderProductInterface productInterface, String id) {
         new ProductOrders(productInterface).execute(id);
     }
@@ -222,9 +225,11 @@ public class AccessDatabase {
                 // Log.e("lllll",strings[1]);
                 return daoInterface.getProductByFeatured(Integer.parseInt(strings[2]), Integer.parseInt(strings[3]));
             } else if (strings[1].equals("brand_id")) {
-                Log.e("d;d;;d", strings[2] + " " + strings[3]);
+                //Log.e("d;d;;d", strings[2] + " " + strings[3]);
                 return daoInterface.getProductByBrand(strings[0], Integer.parseInt(strings[2]), Integer.parseInt(strings[3]));
             } else {
+               // Log.e("d;d;;d", strings[2] + " " + strings[3]);
+
                 return daoInterface.getProductByCategory(strings[0], Integer.parseInt(strings[2]), Integer.parseInt(strings[3]));
             }
         }
@@ -771,6 +776,29 @@ public class AccessDatabase {
         }
 
     }
+    public class LastOrderTask extends AsyncTask<String, Void, CreateOrderModel> {
+        private DataBaseInterfaces.LastOrderInterface allOrderInterface;
+
+        public LastOrderTask(DataBaseInterfaces.LastOrderInterface allOrderInterface) {
+            this.allOrderInterface = allOrderInterface;
+        }
+
+        @Override
+        protected CreateOrderModel doInBackground(String... strings) {
+
+
+            return daoInterface.getlastOrder();
+
+        }
+
+        @Override
+        protected void onPostExecute(CreateOrderModel createOrderModel) {
+
+            allOrderInterface.onLastOrderDataSuccess(createOrderModel);
+        }
+
+    }
+
     public class InsertSingleCustomerTask extends AsyncTask<CustomerModel, Void, Long> {
         private DataBaseInterfaces.CustmomerInsertInterface retrieveInsertInterface;
 
