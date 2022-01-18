@@ -368,9 +368,9 @@
                         android:layout_height="wrap_content"
 
                         android:text="@string/g_m"
-                        android:visibility="gone"
                         android:textColor="@color/black"
-                        android:textSize="13sp" />
+                        android:textSize="13sp"
+                        android:visibility="gone" />
 
                     <FrameLayout
                         android:id="@+id/flRemove"
@@ -378,8 +378,8 @@
                         android:layout_height="40dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
-                        android:visibility="gone"
-                        android:background="@drawable/rounded_red">
+                        android:background="@drawable/rounded_red"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="30dp"
@@ -399,8 +399,8 @@
                         android:layout_weight="1"
                         android:background="@drawable/rounded_color5"
                         android:gravity="center"
-
-                        android:padding="2dp">
+                        android:padding="2dp"
+                        android:visibility="gone">
 
                         <LinearLayout
                             android:layout_width="match_parent"

@@ -503,7 +503,8 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
         if (!categoryindex.contains(model2.getCategory_id())) {
             accessDatabase.udateproduct(model2.getProduct_id(), 0, 0, this);
             accessDatabase.udateproduct(model2.getProduct_id(), model2.getQty(), this);
-        } else {
+        }
+        else {
             if (model2.getCategory_id() == 8) {
                 Log.e("dd;d;d;;", model2.getCategory_ids() + " " + model2.getProducts_id());
                 List<String> productids = Arrays.asList(model2.getProducts_id().replace("[", "").replace("]", "").replace(" ", "").split(","));
@@ -852,8 +853,37 @@ public class CartActivity extends AppCompatActivity implements DataBaseInterface
         if (pos != -1) {
             pos += 1;
             if (pos < list.size()) {
-                accessDatabase.udateproductCount(list.get(pos), this);
+
+                //accessDatabase.udateproductCount(list.get(pos), this);
+                if (!categoryindex.contains(list.get(pos).getCategory_id())) {
+                    accessDatabase.udateproduct(list.get(pos).getProduct_id(), 0, 0, this);
+                    accessDatabase.udateproduct(list.get(pos).getProduct_id(), -list.get(pos).getQty(), this);
+                }
+                else {
+                    if (list.get(pos).getCategory_id() == 8) {
+                        List<String> productids = Arrays.asList(list.get(pos).getProducts_id().replace("[", "").replace("]", "").replace(" ", "").split(","));
+                        List<String> categoryids = Arrays.asList(list.get(pos).getCategory_ids().replace("[", "").replace("]", "").replace(" ", "").split(","));
+                        for (int i = 0; i < productids.size(); i++) {
+                            if (categoryindex.contains(Integer.parseInt(categoryids.get(i)))) {
+                                accessDatabase.udateproduct(Integer.parseInt(productids.get(i)), 0, -list.get(pos).getQty(), this);
+                                //  accessDatabase.udateproduct(model2.getProduct_id(), model2.getQty(), this);
+
+                            } else {
+                                accessDatabase.udateproduct(Integer.parseInt(productids.get(i)), 0, 0, this);
+                                accessDatabase.udateproduct(Integer.parseInt(productids.get(i)), -list.get(pos).getQty(), this);
+                            }
+
+                        }
+                        accessDatabase.udateproduct(list.get(pos).getProduct_id(), 0, 0, this);
+
+
+                    } else {
+                        accessDatabase.udateproduct(list.get(pos).getProduct_id(), 0, -list.get(pos).getQty(), this);
+
+                    }
+                }
             } else {
+
                 preferences.clearcart_oliva(CartActivity.this);
 
                 Intent intent = new Intent(CartActivity.this, InvoiceActivity.class);

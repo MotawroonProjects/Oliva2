@@ -1845,13 +1845,16 @@ public class HomeActivity extends AppCompatActivity implements DataBaseInterface
     public void onUnitDataSuccess(ProductModel.Unit unit) {
         if (unit != null) {
             if (getall) {
+                if(layoutpos<productModelList.size()){
                 ProductModel productModel = productModelList.get(layoutpos);
                 productModel.setUnit(unit);
-                productModelList.set(layoutpos, productModel);
+                productModelList.set(layoutpos, productModel);}
             } else {
-                ProductModel productModel = allproduct.get(layoutpos2);
+                if(layoutpos2<allproduct.size()){
+
+                    ProductModel productModel = allproduct.get(layoutpos2);
                 productModel.setUnit(unit);
-                allproduct.set(layoutpos2, productModel);
+                allproduct.set(layoutpos2, productModel);}
             }
         }
         if (getall) {

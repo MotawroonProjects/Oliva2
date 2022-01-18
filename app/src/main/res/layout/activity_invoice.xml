@@ -75,7 +75,26 @@
                     android:src="@drawable/logo"
 
                     />
-
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Simplified Tax Invoice"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="فاتورة ضريبة مبسطة"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
